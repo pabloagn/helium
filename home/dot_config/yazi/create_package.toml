@@ -1,0 +1,65 @@
+# Yazi plugin manifest.
+#
+# This file uses Chezmoi's `create_` attribute: Helium writes it once on a new
+# machine and never overwrites it again. That is deliberate — `ya pkg install`
+# rewrites this file in place to pin each package's `rev` and `hash`, and a
+# managed file would drift on every apply.
+#
+# To add a package, run `ya pkg add <owner>/<repo>` and commit the result back.
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:full-border"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:git"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:chmod"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:diff"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:jump-to-char"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-enter"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-filter"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-paste"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:toggle-pane"
+
+[[plugin.deps]]
+use = "wylie102/duckdb"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:piper"
+
+[[plugin.deps]]
+use = "ndtoan96/ouch"
+
+[[plugin.deps]]
+use = "KKV9/compress"
+
+[[plugin.deps]]
+use = "boydaihungst/mediainfo"
+
+[[plugin.deps]]
+use = "boydaihungst/restore"
+
+[[plugin.deps]]
+use = "MasouShizuka/projects"
+
+[[plugin.deps]]
+use = "dedukun/relative-motions"
+
+[[plugin.deps]]
+use = "Lil-Dank/lazygit"
+
+[flavor]
+deps = []

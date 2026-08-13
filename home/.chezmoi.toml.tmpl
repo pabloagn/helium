@@ -1,0 +1,14 @@
+{{- $profile := promptStringOnce . "profile" "Machine profile (work/personal)" -}}
+{{- $fullName := promptStringOnce . "fullName" "Full name" -}}
+{{- $email := promptStringOnce . "email" "Primary Git email" -}}
+{{- $firefoxAtmosphericProfile := promptStringOnce . "firefoxAtmosphericProfile" "Firefox AtmosphericAI profile path (blank to disable)" -}}
+{{- $firefoxPersonalProfile := promptStringOnce . "firefoxPersonalProfile" "Firefox personal profile path (blank to disable)" -}}
+{{- $firefoxPrivateProfile := promptStringOnce . "firefoxPrivateProfile" "Firefox private profile path (blank to disable)" -}}
+
+[data]
+    profile = {{ $profile | quote }}
+    fullName = {{ $fullName | quote }}
+    email = {{ $email | quote }}
+    firefoxAtmosphericProfile = {{ $firefoxAtmosphericProfile | quote }}
+    firefoxPersonalProfile = {{ $firefoxPersonalProfile | quote }}
+    firefoxPrivateProfile = {{ $firefoxPrivateProfile | quote }}

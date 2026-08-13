@@ -1,0 +1,22 @@
+#!/bin/sh
+set -eu
+
+# Niri exposed screen, selection, and window captures on separate chords.
+# `screencapture` covers all three. The `-clip` variants pass -c, which puts the
+# capture straight on the clipboard instead of writing a file.
+
+mode=${1:-screen}
+target="$HOME/Desktop/Screenshot $(date '+%Y-%m-%d at %H.%M.%S').png"
+
+case "$mode" in
+  screen)      exec /usr/sbin/screencapture -x "$target" ;;
+  region)      exec /usr/sbin/screencapture -i "$target" ;;
+  window)      exec /usr/sbin/screencapture -i -w "$target" ;;
+  screen-clip) exec /usr/sbin/screencapture -x -c ;;
+  region-clip) exec /usr/sbin/screencapture -i -c ;;
+  window-clip) exec /usr/sbin/screencapture -i -w -c ;;
+  *)
+    echo "usage: helium-screenshot screen|region|window[-clip]" >&2
+    exit 2
+    ;;
+esac

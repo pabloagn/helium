@@ -1,0 +1,15 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+
+# Package manifest hash: {{ include "dot_config/yazi/create_package.toml" | sha256sum }}
+
+if ! command -v ya >/dev/null 2>&1; then
+    echo "Yazi must be installed before its plugins can be fetched." >&2
+    exit 1
+fi
+
+# `ya pkg install` is a no-op for packages already deployed at the pinned
+# revision, so this stays cheap on every apply.
+ya pkg install
+{{- end }}

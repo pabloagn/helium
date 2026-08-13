@@ -1,0 +1,31 @@
+#!/bin/sh
+set -eu
+
+# Always launch through `open`. Executing the Firefox binary directly bypasses
+# LaunchServices, and AeroSpace cannot see or tile windows opened that way.
+#
+# `--new-window` covers both cases with a single command: if the profile is not
+# running, Firefox starts it; if it is, Firefox forwards the request to that
+# profile's own instance and opens another window there. Profiles run
+# concurrently, so Personal and AtmosphericAI never displace each other.
+
+profile=${1:-}
+
+if [ -z "$profile" ]; then
+  echo "usage: helium-firefox <profile-directory> [url...]" >&2
+  exit 2
+fi
+shift
+
+if [ ! -d "$profile" ]; then
+  echo "helium-firefox: no such Firefox profile: $profile" >&2
+  exit 1
+fi
+
+# Any remaining arguments are URLs or file paths to open, which is what lets
+# Yazi hand an .html file to a specific profile.
+if [ "$#" -gt 0 ]; then
+  exec open -na Firefox --args --profile "$profile" --new-window "$@"
+fi
+
+exec open -na Firefox --args --profile "$profile" --new-window about:newtab

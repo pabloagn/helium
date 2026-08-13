@@ -1,0 +1,7 @@
+[data]
+    profile = "work"
+    fullName = "Helium Test User"
+    email = "helium@example.invalid"
+    firefoxAtmosphericProfile = "/tmp/firefox-atmospheric"
+    firefoxPersonalProfile = "/tmp/firefox-personal"
+    firefoxPrivateProfile = "/tmp/firefox-private"

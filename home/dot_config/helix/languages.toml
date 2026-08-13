@@ -1,0 +1,426 @@
+# Ported verbatim from Rhodium's Helix languages module: 55 language servers
+# and 58 language definitions.
+#
+# Most of these server binaries were installed by Nix on Rhodium and are absent
+# here. That is safe: Helix only starts a server when you open a matching file,
+# and simply logs a warning if the binary is missing. Install any you want with
+# Homebrew and it starts working with no config change.
+
+[language-server]
+bash-language-server = { command = "bash-language-server", args = ["start"] }
+clangd = { command = "clangd" }
+omnisharp = { command = "omnisharp", args = ["-lsp"] }
+clojure-lsp = { command = "clojure-lsp" }
+cmake-language-server = { command = "cmake-language-server" }
+crystalline = { command = "crystalline" }
+serve-d = { command = "serve-d" }
+dhall-lsp-server = { command = "dhall-lsp-server" }
+docker-langserver = { command = "docker-langserver", args = ["--stdio"] }
+elixir-ls = { command = "elixir-ls" }
+elm-language-server = { command = "elm-language-server" }
+emmet-lsp = { command = "emmet-language-server", args = ["--stdio"] }
+fish-lsp = { command = "fish-lsp", args = ["start"] }
+fortls = { command = "fortls" }
+fsautocomplete = { command = "fsautocomplete", args = ["--adaptive-lsp-server-enabled"] }
+gleam = { command = "gleam", args = ["lsp"] }
+graphql-language-service = { command = "graphql-lsp", args = ["server", "-m", "stream"] }
+haskell-language-server = { command = "haskell-language-server-wrapper", args = ["--lsp"] }
+jdtls = { command = "jdtls" }
+jinja-lsp = { command = "jinja-lsp" }
+julia-lsp = { command = "julia", args = ["--startup-file=no", "--history-file=no", "-e", "using LanguageServer; runserver()"] }
+kotlin-language-server = { command = "kotlin-language-server" }
+texlab = { command = "texlab" }
+lua-language-server = { command = "lua-language-server" }
+marksman = { command = "marksman", args = ["server"] }
+nixd = { command = "nixd" }
+nushell = { command = "nu", args = ["--lsp"] }
+ocamllsp = { command = "ocamllsp" }
+ols = { command = "ols" }
+perlnavigator = { command = "perlnavigator", args = ["--stdio"] }
+intelephense = { command = "intelephense", args = ["--stdio"] }
+prisma-language-server = { command = "prisma-language-server", args = ["--stdio"] }
+bufls = { command = "buf", args = ["beta", "lsp"] }
+ruff = { command = "ruff", args = ["server"] }
+r-language-server = { command = "R", args = ["--slave", "-e", "languageserver::run()"] }
+rust-analyzer = { command = "rust-analyzer" }
+metals = { command = "metals" }
+sqls = { command = "sqls" }
+svelteserver = { command = "svelteserver", args = ["--stdio"] }
+sourcekit-lsp = { command = "sourcekit-lsp" }
+tailwindcss-ls = { command = "tailwindcss-language-server", args = ["--stdio"] }
+terraform-ls = { command = "terraform-ls", args = ["serve"] }
+taplo = { command = "taplo", args = ["lsp", "stdio"] }
+tinymist = { command = "tinymist" }
+typescript-language-server = { command = "typescript-language-server", args = ["--stdio"] }
+vue-language-server = { command = "vue-language-server", args = ["--stdio"] }
+lemminx = { command = "lemminx" }
+zls = { command = "zls" }
+
+[language-server.vscode-css-language-server]
+command = "vscode-css-language-server"
+args = ["--stdio"]
+config = { provideFormatter = true }
+
+[language-server.gopls]
+command = "gopls"
+
+[language-server.gopls.config]
+hints = { assignVariableTypes = true, compositeLiteralFields = true, compositeLiteralTypes = true, constantValues = true, functionTypeParameters = true, parameterNames = true, rangeVariableTypes = true }
+
+[language-server.vscode-html-language-server]
+command = "vscode-html-language-server"
+args = ["--stdio"]
+config = { provideFormatter = true }
+
+[language-server.vscode-json-language-server]
+command = "vscode-json-language-server"
+args = ["--stdio"]
+
+[language-server.vscode-json-language-server.config]
+provideFormatter = true
+
+[language-server.vscode-json-language-server.config.json]
+validate = { enable = true }
+
+[language-server.nil]
+command = "nil"
+
+[language-server.nil.config]
+
+[language-server.nil.config.nil]
+formatting = { command = ["nixfmt"] }
+
+[language-server.pyright]
+command = "pyright-langserver"
+args = ["--stdio"]
+
+[language-server.pyright.config]
+
+[language-server.pyright.config.python]
+analysis = { typeCheckingMode = "basic", autoImportCompletions = true }
+
+[language-server.yaml-language-server]
+command = "yaml-language-server"
+args = ["--stdio"]
+
+[language-server.yaml-language-server.config]
+yaml = { validate = true, completion = true }
+
+[[language]]
+name = "bash"
+language-servers = ["bash-language-server"]
+auto-format = true
+formatter = { command = "shfmt" }
+
+[[language]]
+name = "c"
+language-servers = ["clangd"]
+auto-format = true
+formatter = { command = "clang-format" }
+
+[[language]]
+name = "cpp"
+language-servers = ["clangd"]
+auto-format = true
+formatter = { command = "clang-format" }
+
+[[language]]
+name = "c-sharp"
+language-servers = ["omnisharp"]
+auto-format = true
+
+[[language]]
+name = "clojure"
+language-servers = ["clojure-lsp"]
+auto-format = true
+
+[[language]]
+name = "cmake"
+language-servers = ["cmake-language-server"]
+auto-format = true
+
+[[language]]
+name = "crystal"
+language-servers = ["crystalline"]
+auto-format = true
+
+[[language]]
+name = "css"
+language-servers = ["vscode-css-language-server", "tailwindcss-ls"]
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "file.css"] }
+
+[[language]]
+name = "d"
+language-servers = ["serve-d"]
+auto-format = true
+
+[[language]]
+name = "dhall"
+language-servers = ["dhall-lsp-server"]
+auto-format = true
+formatter = { command = "dhall", args = ["format"] }
+
+[[language]]
+name = "dockerfile"
+language-servers = ["docker-langserver"]
+
+[[language]]
+name = "elixir"
+language-servers = ["elixir-ls"]
+auto-format = true
+formatter = { command = "mix", args = ["format", "-"] }
+
+[[language]]
+name = "elm"
+language-servers = ["elm-language-server"]
+auto-format = true
+
+[[language]]
+name = "env"
+
+[[language.file-types]]
+glob = ".env"
+
+[[language.file-types]]
+glob = ".env.*"
+
+[[language]]
+name = "fish"
+language-servers = ["fish-lsp"]
+auto-format = true
+formatter = { command = "fish_indent" }
+
+[[language]]
+name = "fortran"
+language-servers = ["fortls"]
+auto-format = true
+formatter = { command = "fprettify" }
+
+[[language]]
+name = "fsharp"
+language-servers = ["fsautocomplete"]
+auto-format = true
+
+[[language]]
+name = "gleam"
+language-servers = ["gleam"]
+auto-format = true
+
+[[language]]
+name = "go"
+language-servers = ["gopls"]
+auto-format = true
+formatter = { command = "gofumpt" }
+
+[[language]]
+name = "graphql"
+language-servers = ["graphql-language-service"]
+
+[[language]]
+name = "haskell"
+language-servers = ["haskell-language-server"]
+auto-format = true
+
+[[language]]
+name = "hcl"
+language-servers = ["terraform-ls"]
+auto-format = true
+
+[[language]]
+name = "html"
+language-servers = ["vscode-html-language-server", "tailwindcss-ls", "emmet-lsp"]
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "file.html"] }
+
+[[language]]
+name = "java"
+language-servers = ["jdtls"]
+auto-format = true
+
+[[language]]
+name = "javascript"
+language-servers = ["typescript-language-server", "tailwindcss-ls"]
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "file.js"] }
+
+[[language]]
+name = "json"
+language-servers = ["vscode-json-language-server"]
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "file.json"] }
+
+[[language]]
+name = "jsonc"
+language-servers = ["vscode-json-language-server"]
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "file.jsonc"] }
+
+[[language]]
+name = "jsx"
+language-servers = ["typescript-language-server", "tailwindcss-ls"]
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "file.jsx"] }
+
+[[language]]
+name = "julia"
+language-servers = ["julia-lsp"]
+auto-format = true
+
+[[language]]
+name = "kotlin"
+language-servers = ["kotlin-language-server"]
+auto-format = true
+
+[[language]]
+name = "latex"
+language-servers = ["texlab"]
+auto-format = true
+
+[[language]]
+name = "lua"
+language-servers = ["lua-language-server"]
+auto-format = true
+formatter = { command = "stylua", args = ["-"] }
+
+[[language]]
+name = "markdown"
+language-servers = ["marksman"]
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "file.md"] }
+soft-wrap = { enable = true }
+
+[[language]]
+name = "nix"
+language-servers = ["nixd", "nil"]
+auto-format = true
+formatter = { command = "nixfmt" }
+
+[[language]]
+name = "nu"
+language-servers = ["nushell"]
+
+[[language]]
+name = "ocaml"
+language-servers = ["ocamllsp"]
+auto-format = true
+
+[[language]]
+name = "odin"
+language-servers = ["ols"]
+
+[[language]]
+name = "perl"
+language-servers = ["perlnavigator"]
+
+[[language]]
+name = "php"
+language-servers = ["intelephense"]
+auto-format = true
+
+[[language]]
+name = "prisma"
+language-servers = ["prisma-language-server"]
+auto-format = true
+
+[[language]]
+name = "protobuf"
+language-servers = ["bufls"]
+
+[[language]]
+name = "python"
+auto-format = true
+formatter = { command = "ruff", args = ["format", "-"] }
+
+[[language.language-servers]]
+name = "pyright"
+except-features = ["format"]
+
+[[language.language-servers]]
+name = "ruff"
+only-features = ["format", "diagnostics"]
+
+[[language]]
+name = "r"
+language-servers = ["r-language-server"]
+auto-format = true
+
+[[language]]
+name = "rust"
+language-servers = ["rust-analyzer"]
+auto-format = true
+
+[[language]]
+name = "scala"
+language-servers = ["metals"]
+auto-format = true
+
+[[language]]
+name = "scss"
+language-servers = ["vscode-css-language-server", "tailwindcss-ls"]
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "file.scss"] }
+
+[[language]]
+name = "sql"
+language-servers = ["sqls"]
+
+[[language]]
+name = "svelte"
+language-servers = ["svelteserver", "tailwindcss-ls"]
+auto-format = true
+
+[[language]]
+name = "swift"
+language-servers = ["sourcekit-lsp"]
+auto-format = true
+
+[[language]]
+name = "tfvars"
+language-servers = ["terraform-ls"]
+auto-format = true
+
+[[language]]
+name = "toml"
+language-servers = ["taplo"]
+auto-format = true
+
+[[language]]
+name = "tsx"
+language-servers = ["typescript-language-server", "tailwindcss-ls"]
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "file.tsx"] }
+
+[[language]]
+name = "typescript"
+language-servers = ["typescript-language-server", "tailwindcss-ls"]
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "file.ts"] }
+
+[[language]]
+name = "typst"
+language-servers = ["tinymist"]
+auto-format = true
+formatter = { command = "typstfmt" }
+
+[[language]]
+name = "vue"
+language-servers = ["vue-language-server", "tailwindcss-ls"]
+auto-format = true
+
+[[language]]
+name = "xml"
+language-servers = ["lemminx"]
+auto-format = true
+
+[[language]]
+name = "yaml"
+language-servers = ["yaml-language-server"]
+auto-format = true
+formatter = { command = "prettier", args = ["--stdin-filepath", "file.yaml"] }
+
+[[language]]
+name = "zig"
+language-servers = ["zls"]
+auto-format = true
+

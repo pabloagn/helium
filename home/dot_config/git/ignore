@@ -1,0 +1,15 @@
+*~
+*.swp
+*.swo
+.idea/
+.vscode/
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+*.log
+*.tmp
+*.bak
+
+
+**/.claude/settings.local.json

@@ -1,0 +1,41 @@
+# Desired native applications that are not currently owned by the main Brewfile.
+# `company-or-vendor` means installation is intentionally manual or MDM-managed.
+
+[[apps]]
+name = "AeroSpace"
+install = "third-party-homebrew-tap"
+installed = true
+notes = "Installed from nikitabobko/tap. Trust only the specific cask after reviewing the tap."
+
+[[apps]]
+name = "Ghostty"
+install = "company-or-vendor"
+installed = true
+
+[[apps]]
+name = "Karabiner-Elements"
+install = "company-or-vendor"
+installed = true
+
+[[apps]]
+name = "Raycast"
+install = "company-or-vendor"
+installed = true
+
+[[apps]]
+name = "Zed"
+install = "company-or-vendor"
+installed = true
+
+[[apps]]
+name = "Visual Studio Code"
+install = "company-or-vendor"
+installed = true
+
+[[apps]]
+name = "Berkeley Mono Rh (TX-02)"
+install = "company-or-vendor"
+installed = true
+notes = """
+Paid font from US Graphics Company, LT-02 Developer Font License. The .ttf files are licensed and MUST NOT be committed to this repository; Homebrew cannot manage them either. Install by copying the 24 .ttf files from the vendor download into ~/Library/Fonts. Ghostty and Zed reference the family as "Berkeley Mono Rh" and fall back to JetBrainsMono Nerd Font for icon glyphs, so both degrade gracefully on a machine where the font is absent."""
+

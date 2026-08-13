@@ -1,0 +1,13 @@
+auto_sync = false
+update_check = false
+filter_mode = "global"
+filter_mode_shell_up_key_binding = "directory"
+search_mode = "fuzzy"
+style = "compact"
+inline_height = 20
+show_preview = true
+history_filter = [
+  "^curl.*-H.*[Aa]uthorization",
+  "^export .*(TOKEN|SECRET|PASSWORD|KEY)=",
+  "^aws configure",
+]

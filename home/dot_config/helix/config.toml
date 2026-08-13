@@ -1,0 +1,68 @@
+# Ported from the Rhodium (NixOS) Helix configuration.
+#
+# Two changes were required for this machine:
+#   * clipboard-provider is "pasteboard" (macOS) rather than "wayland".
+#   * `editor.evil` is dropped. Rhodium ran the evil-helix fork; this machine
+#     runs upstream Helix, which does not know that option.
+
+theme = "chiaroscuro"
+
+[keys]
+insert = { C-s = ["normal_mode", ":write"] }
+
+[keys.normal]
+D = ["extend_to_line_bounds", "delete_selection"]
+C-d = ["half_page_down", "align_view_center"]
+C-u = ["half_page_up", "align_view_center"]
+C-s = ":write"
+space = { space = ["save_selection", "select_all", "yank_main_selection_to_clipboard", "jump_backward"], "/" = "global_search" }
+
+[editor]
+auto-completion = true
+auto-format = true
+auto-info = true
+bufferline = "always"
+clipboard-provider = "pasteboard"
+completion-trigger-len = 1
+cursorcolumn = false
+cursorline = true
+default-yank-register = "+"
+idle-timeout = 250
+indent-heuristic = "hybrid"
+insert-final-newline = true
+middle-click-paste = true
+mouse = true
+path-completion = true
+popup-border = "all"
+scroll-lines = 1
+scrolloff = 8
+true-color = true
+undercurl = true
+color-modes = true
+end-of-line-diagnostics = "hint"
+line-number = "relative"
+trim-trailing-whitespace = true
+gutters = ["diagnostics", "spacer", "line-numbers", "spacer", "diff"]
+smart-tab = { enable = true }
+inline-diagnostics = { cursor-line = "warning" }
+soft-wrap = { enable = true, wrap-at-text-width = true }
+search = { smart-case = true, wrap-around = true }
+cursor-shape = { insert = "bar", normal = "block", select = "underline" }
+file-picker = { hidden = true, git-ignore = true }
+indent-guides = { render = true, character = "\u2502" }
+lsp = { enable = true, auto-signature-help = true, display-inlay-hints = true, display-messages = true, display-progress-messages = true, display-signature-help-docs = true, display-color-swatches = true, snippets = true }
+
+[editor.auto-save]
+focus-lost = true
+after-delay = { enable = true, timeout = 5000 }
+
+[editor.whitespace]
+render = { tab = "all", nbsp = "all" }
+
+[editor.statusline]
+separator = " \u2502 "
+left = ["mode", "spinner", "file-absolute-path", "read-only-indicator", "file-modification-indicator"]
+center = ["version-control"]
+right = ["diagnostics", "workspace-diagnostics", "spacer", "selections", "spacer", "position", "position-percentage", "total-line-numbers", "spacer", "file-encoding", "file-line-ending", "file-type"]
+mode = { normal = "NORMAL", insert = "INSERT", select = "SELECT" }
+

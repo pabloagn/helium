@@ -1,0 +1,12 @@
+.DS_Store
+*.bak
+*.backup
+*.log
+*.swp
+*.swo
+.env
+.env.*
+!.env.example
+private/
+secrets/
+

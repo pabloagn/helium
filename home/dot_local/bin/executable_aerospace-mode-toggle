@@ -1,0 +1,21 @@
+#!/bin/sh
+set -eu
+
+aerospace_bin=/opt/homebrew/bin/aerospace
+requested_mode=${1:-}
+
+case "$requested_mode" in
+  resize|service) ;;
+  *)
+    echo "usage: aerospace-mode-toggle resize|service" >&2
+    exit 2
+    ;;
+esac
+
+current_mode=$($aerospace_bin list-modes --current)
+
+if [ "$current_mode" = "$requested_mode" ]; then
+  exec "$aerospace_bin" mode main
+fi
+
+exec "$aerospace_bin" mode "$requested_mode"

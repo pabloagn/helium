@@ -1,0 +1,26 @@
+#!/bin/sh
+set -eu
+
+aerospace_bin=/opt/homebrew/bin/aerospace
+current_mode=$($aerospace_bin list-modes --current)
+
+case "$current_mode" in
+  resize)
+    message='Arrows resize · keep or release Hyper · Escape exits'
+    ;;
+  service)
+    message='Arrows join · R resets · F floats · Escape exits'
+    ;;
+  main)
+    message='Navigation controls restored'
+    ;;
+  *)
+    message='Active binding mode changed'
+    ;;
+esac
+
+/usr/bin/osascript - "$current_mode" "$message" <<'APPLESCRIPT' >/dev/null 2>&1 || true
+on run argv
+  display notification (item 2 of argv) with title ("AeroSpace · " & (item 1 of argv))
+end run
+APPLESCRIPT

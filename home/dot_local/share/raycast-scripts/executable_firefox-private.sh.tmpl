@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Required parameters:
+# @raycast.schemaVersion 1
+# @raycast.title Firefox Private
+# @raycast.mode silent
+
+# Optional parameters:
+# @raycast.icon 🦊
+# @raycast.packageName Firefox Profiles
+# @raycast.description Open the Private Firefox profile in a new window
+{{- if .firefoxPrivateProfile }}
+
+exec "$HOME/.local/bin/helium-firefox" {{ .firefoxPrivateProfile | quote }}
+{{- else }}
+
+echo "Firefox Private profile is not configured in Chezmoi." >&2
+exit 1
+{{- end }}

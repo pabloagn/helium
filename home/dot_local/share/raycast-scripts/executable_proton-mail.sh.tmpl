@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Required parameters:
+# @raycast.schemaVersion 1
+# @raycast.title Proton Mail
+# @raycast.mode silent
+
+# Optional parameters:
+# @raycast.icon ✉️
+# @raycast.packageName Firefox Profiles
+# @raycast.description Open Proton Mail in the Personal Firefox profile
+{{- if .firefoxPersonalProfile }}
+
+exec "$HOME/.local/bin/helium-firefox" {{ .firefoxPersonalProfile | quote }} "https://mail.proton.me/u/3/inbox"
+{{- else }}
+
+echo "Firefox personal profile is not configured in Chezmoi." >&2
+exit 1
+{{- end }}

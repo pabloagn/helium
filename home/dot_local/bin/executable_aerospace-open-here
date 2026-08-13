@@ -1,0 +1,55 @@
+#!/bin/sh
+set -eu
+
+aerospace_bin=/opt/homebrew/bin/aerospace
+
+if [ "$#" -lt 2 ]; then
+  echo "usage: aerospace-open-here <bundle-id> <command> [args...]" >&2
+  exit 2
+fi
+
+bundle_id=$1
+shift
+
+workspace=$($aerospace_bin list-workspaces --focused --format '%{workspace}')
+focused_window=$($aerospace_bin list-windows --focused --format '%{window-id}')
+before_ids=$($aerospace_bin list-windows --monitor all --app-bundle-id "$bundle_id" --format '%{window-id}')
+
+# A tiled workspace cannot reserve an empty half. Prepare the current window and
+# root as horizontal tiles; the new sibling will create the actual 50/50 split.
+$aerospace_bin layout --window-id "$focused_window" tiling
+$aerospace_bin layout --workspace "$workspace" --root h_tiles
+
+"$@" >/dev/null 2>&1 &
+
+attempt=0
+while [ "$attempt" -lt 100 ]; do
+  current_ids=$($aerospace_bin list-windows --monitor all --app-bundle-id "$bundle_id" --format '%{window-id}')
+
+  for candidate_id in $current_ids; do
+    found_before=false
+    for old_id in $before_ids; do
+      if [ "$candidate_id" = "$old_id" ]; then
+        found_before=true
+        break
+      fi
+    done
+
+    if [ "$found_before" = false ]; then
+      # Let AeroSpace finish registering the window before repositioning it.
+      sleep 0.2
+      $aerospace_bin layout --window-id "$candidate_id" tiling
+      $aerospace_bin move-node-to-workspace --window-id "$candidate_id" -- "$workspace"
+      $aerospace_bin layout --workspace "$workspace" --root h_tiles
+      $aerospace_bin balance-sizes --workspace "$workspace"
+      $aerospace_bin focus --window-id "$candidate_id"
+      exit 0
+    fi
+  done
+
+  attempt=$((attempt + 1))
+  sleep 0.1
+done
+
+echo "AeroSpace did not detect a new $bundle_id window within 10 seconds." >&2
+exit 1

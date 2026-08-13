@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+{{- if .firefoxAtmosphericProfile }}
+exec "$HOME/.local/bin/helium-firefox" {{ .firefoxAtmosphericProfile | quote }} "$@"
+{{- else }}
+echo "Firefox AtmosphericAI profile is not configured in Chezmoi." >&2
+exit 1
+{{- end }}

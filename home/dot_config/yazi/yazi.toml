@@ -1,0 +1,111 @@
+# Ported from the Rhodium (NixOS) Yazi configuration, adapted to macOS:
+# openers go through `open`, previews use Preview.app and Finder, and the
+# Wayland/X11-only pieces (wl-clipboard, dragon-drop, thunar, imv, oculante,
+# swayimg, okular, zathura, LibreOffice, the mount plugin) are dropped.
+
+[mgr]
+ratio = [1, 4, 3]
+sort_by = "alphabetical"
+sort_sensitive = false
+sort_reverse = false
+sort_dir_first = true
+sort_translit = false
+linemode = "size_and_mtime"
+show_hidden = false
+show_symlink = true
+scrolloff = 5
+mouse_events = ["click", "scroll", "touch", "move", "drag"]
+
+[preview]
+tab_size = 2
+max_width = 2000
+image_filter = "nearest"
+image_quality = 70
+image_delay = 20
+
+[tasks]
+micro_workers = 10
+macro_workers = 25
+bizarre_retry = 5
+suppress_preload = false
+
+[which]
+sort_by = "none"
+sort_reverse = false
+sort_sensitive = false
+sort_translit = false
+
+[log]
+enabled = false
+
+[opener]
+edit = [
+  { run = '${EDITOR:-nvim} "$@"', desc = "$EDITOR", block = true, for = "unix" },
+]
+zed = [
+  { run = 'open -a Zed "$@"', desc = "Zed", orphan = true, for = "macos" },
+]
+vscode = [
+  { run = 'open -a "Visual Studio Code" "$@"', desc = "VS Code", orphan = true, for = "macos" },
+]
+open = [
+  { run = 'open "$@"', desc = "System default", orphan = true, for = "macos" },
+]
+preview = [
+  { run = 'open -a Preview "$@"', desc = "Preview", orphan = true, for = "macos" },
+]
+reveal = [
+  { run = 'open -R "$1"', desc = "Reveal in Finder", orphan = true, for = "macos" },
+]
+browser-personal = [
+  { run = '"$HOME/.local/bin/ff-personal" "$@"', desc = "Firefox (Personal)", orphan = true, for = "macos" },
+]
+browser-atmospheric = [
+  { run = '"$HOME/.local/bin/ff-atmospheric" "$@"', desc = "Firefox (AtmosphericAI)", orphan = true, for = "macos" },
+]
+extract = [
+  { run = 'ouch decompress -- "$@"', desc = "Extract here", for = "unix" },
+]
+
+# `prepend_rules` keeps Yazi's own defaults as the fallback, so these only need
+# to cover the cases where the default choice is wrong.
+[open]
+prepend_rules = [
+  { url = "*/", use = ["edit", "zed", "reveal"] },
+  { url = "*.{html,htm,xhtml}", use = ["browser-personal", "browser-atmospheric", "edit", "zed", "reveal"] },
+  { url = "*.{csv,tsv,parquet}", use = ["edit", "open", "reveal"] },
+  { url = "*.{md,markdown,txt,text,log,rst,tex}", use = ["edit", "zed", "open", "reveal"] },
+  { url = "*.pdf", use = ["open", "preview", "reveal"] },
+  { url = "*.svg", use = ["open", "edit", "reveal"] },
+  { mime = "image/*", use = ["open", "preview", "reveal"] },
+  { mime = "{audio,video}/*", use = ["open", "reveal"] },
+  { mime = "application/{,g}zip", use = ["extract", "open", "reveal"] },
+  { mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}", use = ["extract", "open", "reveal"] },
+  { mime = "text/*", use = ["edit", "zed", "open", "reveal"] },
+  { mime = "application/{json,x-ndjson}", use = ["edit", "zed", "reveal"] },
+  { mime = "inode/x-empty", use = ["edit", "zed", "reveal"] },
+]
+
+[plugin]
+prepend_fetchers = [
+  { url = "*", run = "git", group = "git" },
+  { url = "*/", run = "git", group = "git" },
+]
+# duckdb's own extension map is: csv, tsv, txt, json, parquet, xlsx, db,
+# duckdb. Anything outside it makes the plugin bail with "File is not a
+# supported file type", so only those are wired here. `.txt` and `.json` are
+# left to Yazi's built-in previewers, which are better for prose and for config
+# files -- duckdb would try to read them as tables.
+prepend_preloaders = [
+  { url = "*.{csv,tsv,parquet,xlsx}", run = "duckdb", multi = false },
+]
+prepend_previewers = [
+  { url = "*.{csv,tsv,parquet,xlsx,db,duckdb}", run = "duckdb" },
+  # Markdown goes through piper, not the glow.yazi plugin: that plugin is
+  # deprecated upstream in favour of piper and calls Command:args(), which Yazi
+  # 26 renamed to :arg() -- every peek raised "attempt to call a nil value".
+  # CLICOLOR_FORCE makes glow emit colour even though its stdout is a pipe.
+  { url = "*.{md,markdown}", run = 'piper -- CLICOLOR_FORCE=1 glow --style=dark -w=$w "$1"' },
+  { mime = "application/{,g}zip", run = "ouch" },
+  { mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}", run = "ouch" },
+]

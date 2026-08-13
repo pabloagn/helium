@@ -1,0 +1,64 @@
+[mgr]
+prepend_keymap = [
+  # ===== Go to =====
+  # These follow the Rhodium jump list, repointed at this machine's layout.
+  { on = ["g", "g"], run = "cd ~", desc = "Go home" },
+  { on = ["g", "d"], run = "cd ~/Downloads", desc = "Go to Downloads" },
+  { on = ["g", "p"], run = "cd ~/personal", desc = "Go to personal" },
+  { on = ["g", "a"], run = "cd ~/atmospheric-ai", desc = "Go to atmospheric-ai" },
+  { on = ["g", "r"], run = "cd ~/personal/rhodium", desc = "Go to rhodium" },
+  { on = ["g", "h"], run = "cd ~/personal/helium", desc = "Go to helium" },
+  { on = ["g", "c"], run = "cd ~/.config", desc = "Go to ~/.config" },
+  { on = ["g", "b"], run = "cd ~/.local/bin", desc = "Go to ~/.local/bin" },
+  { on = ["g", "R"], run = 'shell -- ya emit cd "$(git rev-parse --show-toplevel)"', desc = "Go to repository root" },
+
+  # ===== Fuzzy search =====
+  # `f` becomes a prefix, so plain filter moves to `F` via smart-filter.
+  { on = ["f", "f"], run = "search --via=fd", desc = "Search files by name (fd)" },
+  { on = ["f", "g"], run = "search --via=rg", desc = "Search files by content (ripgrep)" },
+  { on = ["f", "c"], run = "escape --search", desc = "Cancel the ongoing search" },
+
+  # ===== Smart navigation =====
+  { on = ["F"], run = "plugin smart-filter", desc = "Smart filter" },
+  { on = ["l"], run = "plugin smart-enter", desc = "Enter directory or open file" },
+  { on = [";"], run = "plugin jump-to-char", desc = "Jump to char (like vim f)" },
+  { on = ["p"], run = "plugin smart-paste", desc = "Paste into the hovered directory" },
+
+  # ===== Rename =====
+  { on = ["r", "r"], run = "rename --cursor=before_ext", desc = "Rename, preserving extension" },
+  { on = ["r", "a"], run = "rename --empty=all --cursor=start", desc = "Rename from scratch" },
+  { on = ["r", "c"], run = "rename --empty=stem --cursor=start", desc = "Replace file stem" },
+
+  # ===== DuckDB (tabular preview) =====
+  { on = ["H"], run = "plugin duckdb -1", desc = "DuckDB: scroll columns left" },
+  { on = ["L"], run = "plugin duckdb +1", desc = "DuckDB: scroll columns right" },
+  { on = ["<C-d>"], run = "plugin duckdb --toggle-mode", desc = "DuckDB: toggle summary/standard" },
+
+  # ===== Git =====
+  { on = ["g", "i"], run = "plugin lazygit", desc = "Open Lazygit" },
+  { on = ["g", "D"], run = "plugin diff", desc = "Diff selected against hovered" },
+
+  # ===== Archives =====
+  { on = ["c", "a"], run = "plugin compress", desc = "Compress selected files" },
+  { on = ["c", "x"], run = "plugin ouch --extract", desc = "Extract archive here" },
+
+  # ===== Panes =====
+  { on = ["T"], run = "plugin toggle-pane --max-preview", desc = "Maximize preview pane" },
+  { on = ["<C-t>"], run = "plugin toggle-pane --min-preview", desc = "Minimize preview pane" },
+
+  # ===== File operations =====
+  { on = ["c", "m"], run = "plugin chmod", desc = "Change file permissions" },
+  { on = ["M"], run = "plugin mediainfo", desc = "Show media info" },
+  { on = ["u", "r"], run = "plugin restore", desc = "Restore deleted files" },
+
+  # ===== Projects =====
+  { on = ["P", "s"], run = "plugin projects --save", desc = "Save current as project" },
+  { on = ["P", "l"], run = "plugin projects --load", desc = "Load project" },
+  { on = ["P", "d"], run = "plugin projects --delete", desc = "Delete project" },
+  { on = ["P", "D"], run = "plugin projects --delete-all", desc = "Delete all projects" },
+  { on = ["P", "m"], run = "plugin projects --merge", desc = "Merge with other projects" },
+
+  # ===== Clipboard =====
+  # The macOS counterpart to Rhodium's wl-clipboard binding.
+  { on = ["Y"], run = 'shell -- printf "%s\n" "$@" | pbcopy', desc = "Copy paths to clipboard" },
+]

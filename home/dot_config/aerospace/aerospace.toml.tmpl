@@ -1,0 +1,287 @@
+# AeroSpace is the macOS counterpart to the Niri workflow in Rhodium.
+# Right Command and Caps Lock are mapped to Hyper by Karabiner.
+#
+# Hyper is Control+Option+Shift+Command. Because Hyper already contains Shift,
+# `Hyper+Shift` cannot be a distinct chord, so Niri's Mod / Mod+Shift split maps
+# onto Hyper / Option+Shift here: Hyper acts on the focus, Option+Shift moves it
+# or reaches the alternate of the same idea.
+#
+# Hyper must keep all four modifiers. Raycast and other applications register
+# their own global hotkeys against this exact combination, and narrowing it
+# silently breaks every one of them.
+
+config-version = 2
+start-at-login = true
+auto-reload-config = true
+
+# Keep the tree predictable. Nested containers remain available through service mode.
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+accordion-padding = 32
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+
+# Keyboard focus may cross displays without leaving the pointer behind.
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+on-mode-changed = ['exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/aerospace-mode-notify']
+automatically-unhide-macos-hidden-apps = true
+# Focus must never follow the mouse. A fullscreen window still sits on top of
+# the tiled layout underneath it, so any pointer movement would otherwise hand
+# focus to whichever window happens to be beneath the cursor.
+focus-follows-mouse.enabled = false
+
+# Every workspace starts from the same neutral shape. Workspaces are not
+# specialised, so nothing is preconfigured per number; change any container
+# interactively with Option+Shift+Z or service mode.
+persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+[exec]
+inherit-env-vars = true
+
+[exec.env-vars]
+PATH = '/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
+
+[key-mapping]
+preset = 'qwerty'
+
+[gaps]
+inner.horizontal = 12
+inner.vertical = 12
+outer.left = 12
+outer.bottom = 12
+outer.top = 12
+outer.right = 12
+
+# Workspace numbers, not applications, are tied to displays. This keeps
+# Hyper+<number> spatially predictable when docked. Every assignment ends in a
+# generic fallback, so the same config remains useful when undocked.
+[workspace-to-monitor-force-assignment]
+'1' = ['built-in', 'main']
+'2' = ['built-in', 'main']
+'3' = ['MAG', 'main']
+'4' = ['MAG', 'main']
+'5' = ['MAG', 'main']
+'6' = ['DELL', 'secondary', 'main']
+'7' = ['DELL', 'secondary', 'main']
+'8' = ['DELL', 'secondary', 'main']
+'9' = ['main']
+
+[mode.main.binding]
+
+# ---------------------------------------------------------------------------
+# Focus (Niri: Mod+arrows, Mod+HJKL)
+# ---------------------------------------------------------------------------
+ctrl-alt-shift-cmd-left = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors left'
+ctrl-alt-shift-cmd-down = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors down'
+ctrl-alt-shift-cmd-up = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors up'
+ctrl-alt-shift-cmd-right = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors right'
+ctrl-alt-shift-cmd-h = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors left'
+ctrl-alt-shift-cmd-j = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors down'
+ctrl-alt-shift-cmd-k = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors up'
+ctrl-alt-shift-cmd-l = 'focus --boundaries all-monitors-outer-frame --boundaries-action wrap-around-all-monitors right'
+
+# ---------------------------------------------------------------------------
+# Move the focused window (Niri: Mod+Ctrl+arrows, Mod+Ctrl+HJKL)
+# Option+Shift is the single, consistent "take the window with me" layer.
+# ---------------------------------------------------------------------------
+alt-shift-left = 'move --boundaries all-monitors-outer-frame left'
+alt-shift-down = 'move --boundaries all-monitors-outer-frame down'
+alt-shift-up = 'move --boundaries all-monitors-outer-frame up'
+alt-shift-right = 'move --boundaries all-monitors-outer-frame right'
+alt-shift-h = 'move --boundaries all-monitors-outer-frame left'
+alt-shift-j = 'move --boundaries all-monitors-outer-frame down'
+alt-shift-k = 'move --boundaries all-monitors-outer-frame up'
+alt-shift-l = 'move --boundaries all-monitors-outer-frame right'
+
+# ---------------------------------------------------------------------------
+# Workspaces (Niri: Mod+N focuses, Mod+Shift+N sends the window)
+# Sending a window deliberately does not follow it, so a burst of sends from
+# one workspace stays on that workspace.
+# ---------------------------------------------------------------------------
+ctrl-alt-shift-cmd-1 = 'workspace --auto-back-and-forth 1'
+ctrl-alt-shift-cmd-2 = 'workspace --auto-back-and-forth 2'
+ctrl-alt-shift-cmd-3 = 'workspace --auto-back-and-forth 3'
+ctrl-alt-shift-cmd-4 = 'workspace --auto-back-and-forth 4'
+ctrl-alt-shift-cmd-5 = 'workspace --auto-back-and-forth 5'
+ctrl-alt-shift-cmd-6 = 'workspace --auto-back-and-forth 6'
+ctrl-alt-shift-cmd-7 = 'workspace --auto-back-and-forth 7'
+ctrl-alt-shift-cmd-8 = 'workspace --auto-back-and-forth 8'
+ctrl-alt-shift-cmd-9 = 'workspace --auto-back-and-forth 9'
+
+alt-shift-1 = 'move-node-to-workspace 1'
+alt-shift-2 = 'move-node-to-workspace 2'
+alt-shift-3 = 'move-node-to-workspace 3'
+alt-shift-4 = 'move-node-to-workspace 4'
+alt-shift-5 = 'move-node-to-workspace 5'
+alt-shift-6 = 'move-node-to-workspace 6'
+alt-shift-7 = 'move-node-to-workspace 7'
+alt-shift-8 = 'move-node-to-workspace 8'
+alt-shift-9 = 'move-node-to-workspace 9'
+
+ctrl-alt-shift-cmd-leftSquareBracket = 'workspace --wrap-around prev'
+ctrl-alt-shift-cmd-rightSquareBracket = 'workspace --wrap-around next'
+alt-shift-leftSquareBracket = 'move-node-to-workspace --wrap-around prev'
+alt-shift-rightSquareBracket = 'move-node-to-workspace --wrap-around next'
+
+# Niri's Mod+Tab returns to the previous workspace; the move-layer variant
+# returns to the previously focused window instead.
+ctrl-alt-shift-cmd-tab = 'workspace-back-and-forth'
+alt-shift-tab = 'focus-back-and-forth'
+
+# ---------------------------------------------------------------------------
+# Displays. Niri uses Mod+,/. for consume-or-expel; AeroSpace has no columns,
+# so the same keys address the far more useful three-display setup, and
+# join-with lives in service mode instead.
+# ---------------------------------------------------------------------------
+ctrl-alt-shift-cmd-comma = 'focus-monitor --wrap-around prev'
+ctrl-alt-shift-cmd-period = 'focus-monitor --wrap-around next'
+alt-shift-comma = 'move-node-to-monitor --focus-follows-window --wrap-around prev'
+alt-shift-period = 'move-node-to-monitor --focus-follows-window --wrap-around next'
+
+# ---------------------------------------------------------------------------
+# Window and layout (Niri: Mod+C close, Mod+V float, Mod+F maximize,
+# Mod+Shift+F fullscreen, Mod+Z tabbed, Mod+R preset widths)
+# ---------------------------------------------------------------------------
+ctrl-alt-shift-cmd-c = 'close'
+alt-shift-c = 'close-all-windows-but-current'
+ctrl-alt-shift-cmd-v = 'layout floating tiling'
+ctrl-alt-shift-cmd-f = 'fullscreen'
+alt-shift-f = 'macos-native-fullscreen'
+ctrl-alt-shift-cmd-slash = 'layout horizontal vertical'
+
+# Niri puts its tabbed-display toggle on Mod+Z. Hyper+Z is the AtmosphericAI
+# browser here, so the accordion toggle keeps the key on the move layer.
+alt-shift-z = 'layout tiles accordion'
+
+# Niri: Mod+-/= sizes the column, Option+Shift+-/= sizes the window in it.
+ctrl-alt-shift-cmd-minus = 'resize width -80'
+ctrl-alt-shift-cmd-equal = 'resize width +80'
+alt-shift-minus = 'resize height -80'
+alt-shift-equal = 'resize height +80'
+
+# Niri's Mod+R cycles preset widths; resize mode is the interactive equivalent.
+# Mod+Ctrl+R resets the height there, which is balance-sizes here.
+ctrl-alt-shift-cmd-r = 'mode resize'
+alt-shift-r = 'balance-sizes'
+ctrl-alt-shift-cmd-semicolon = 'mode service'
+
+# Karabiner owns the physical Hyper+R and Hyper+; chords and invokes the mode
+# command through the CLI. Native bindings remain as a fallback if Karabiner is
+# temporarily unavailable or its layer action does not consume the event.
+f18 = 'mode resize'
+f19 = 'mode service'
+
+# ---------------------------------------------------------------------------
+# Launchers. The primary key matches Niri; Option+Shift reaches the alternate
+# tool for the same job.
+#
+# These use `open -na`, not `open -a`: -a merely focuses an already-running
+# instance, while -n always spawns a new window. The apps still on plain -a
+# below are single-instance by design and refuse a second copy.
+# ---------------------------------------------------------------------------
+ctrl-alt-shift-cmd-space = 'exec-and-forget open -a Raycast'
+ctrl-alt-shift-cmd-enter = 'exec-and-forget open -na Ghostty.app'
+ctrl-alt-shift-cmd-w = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/aerospace-open-here com.mitchellh.ghostty open -na Ghostty.app'
+
+ctrl-alt-shift-cmd-b = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/ff-personal'
+ctrl-alt-shift-cmd-z = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/ff-atmospheric'
+alt-shift-b = 'exec-and-forget open -na Safari'
+
+ctrl-alt-shift-cmd-d = 'exec-and-forget open -na Ghostty.app --args -e yazi'
+ctrl-alt-shift-cmd-e = 'exec-and-forget open -na Ghostty.app --args -e nvim'
+alt-shift-e = 'exec-and-forget open -na Zed'
+ctrl-alt-shift-cmd-i = 'exec-and-forget open -na "Visual Studio Code"'
+alt-shift-i = 'exec-and-forget open -na Cursor'
+
+# Hyper+A is deliberately left free: Raycast registers it as its own global
+# hotkey, and an AeroSpace binding on the same chord would shadow it.
+alt-shift-a = 'exec-and-forget open -a ChatGPT'
+ctrl-alt-shift-cmd-n = 'exec-and-forget open -a Notion'
+alt-shift-n = 'exec-and-forget open -a Linear'
+ctrl-alt-shift-cmd-m = 'exec-and-forget open -a Slack'
+alt-shift-m = 'exec-and-forget open -a WhatsApp'
+ctrl-alt-shift-cmd-t = 'exec-and-forget open -a "Microsoft Teams"'
+alt-shift-t = 'exec-and-forget open -a zoom.us'
+ctrl-alt-shift-cmd-g = 'exec-and-forget open -a Spotify'
+ctrl-alt-shift-cmd-p = 'exec-and-forget open -a 1Password'
+ctrl-alt-shift-cmd-o = 'exec-and-forget open {{ .chezmoi.homeDir }}/Downloads'
+
+# Niri: Mod+Q calculator, Mod+X overview, Mod+Escape lock.
+ctrl-alt-shift-cmd-q = 'exec-and-forget open -na Calculator'
+ctrl-alt-shift-cmd-x = 'exec-and-forget open -a "Mission Control"'
+ctrl-alt-shift-cmd-esc = 'exec-and-forget pmset displaysleepnow'
+
+# Niri: Mod+S captures the screen, Mod+Shift+S captures a selection,
+# Mod+Alt+S captures a window. The selection capture goes to the clipboard,
+# which is what it is actually used for; the other two write files.
+ctrl-alt-shift-cmd-s = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/helium-screenshot screen'
+alt-shift-s = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/helium-screenshot region-clip'
+ctrl-alt-shift-cmd-y = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/helium-screenshot window'
+
+# Both bare and Hyper-modified keys work. You can release Hyper after entering
+# the mode or keep holding it; Escape, Enter, or the entry chord exits.
+[mode.resize.binding]
+esc = 'mode main'
+enter = 'mode main'
+left = 'resize width -80'
+down = 'resize height +80'
+up = 'resize height -80'
+right = 'resize width +80'
+h = 'resize width -80'
+j = 'resize height +80'
+k = 'resize height -80'
+l = 'resize width +80'
+minus = 'resize smart -80'
+equal = 'resize smart +80'
+ctrl-alt-shift-cmd-left = 'resize width -80'
+ctrl-alt-shift-cmd-down = 'resize height +80'
+ctrl-alt-shift-cmd-up = 'resize height -80'
+ctrl-alt-shift-cmd-right = 'resize width +80'
+ctrl-alt-shift-cmd-h = 'resize width -80'
+ctrl-alt-shift-cmd-j = 'resize height +80'
+ctrl-alt-shift-cmd-k = 'resize height -80'
+ctrl-alt-shift-cmd-l = 'resize width +80'
+ctrl-alt-shift-cmd-minus = 'resize smart -80'
+ctrl-alt-shift-cmd-equal = 'resize smart +80'
+ctrl-alt-shift-cmd-r = 'mode main'
+b = ['balance-sizes', 'mode main']
+
+[mode.service.binding]
+esc = 'mode main'
+enter = 'mode main'
+r = ['flatten-workspace-tree', 'balance-sizes', 'mode main']
+b = ['balance-sizes', 'mode main']
+f = ['layout floating tiling', 'mode main']
+t = ['layout tiles', 'mode main']
+a = ['layout accordion', 'mode main']
+slash = ['layout horizontal vertical', 'mode main']
+left = ['join-with left', 'mode main']
+down = ['join-with down', 'mode main']
+up = ['join-with up', 'mode main']
+right = ['join-with right', 'mode main']
+h = ['join-with left', 'mode main']
+j = ['join-with down', 'mode main']
+k = ['join-with up', 'mode main']
+l = ['join-with right', 'mode main']
+ctrl-alt-shift-cmd-left = ['join-with left', 'mode main']
+ctrl-alt-shift-cmd-down = ['join-with down', 'mode main']
+ctrl-alt-shift-cmd-up = ['join-with up', 'mode main']
+ctrl-alt-shift-cmd-right = ['join-with right', 'mode main']
+ctrl-alt-shift-cmd-semicolon = 'mode main'
+m = ['move-node-to-monitor --focus-follows-window --wrap-around next', 'mode main']
+n = ['macos-native-fullscreen', 'mode main']
+backspace = ['close-all-windows-but-current', 'mode main']
+
+# No application is pinned to a workspace. Every window opens on whatever
+# workspace is focused when it appears, and stays there until it is moved
+# deliberately with Option+Shift+<number>.
+#
+# The only callbacks that remain float windows that are never worth tiling.
+# Callback evaluation stops after the first match.
+[[on-window-detected]]
+if = 'test %{window-title} = "Picture-in-Picture"'
+run = 'layout floating'
+
+[[on-window-detected]]
+if = 'test %{app-bundle-id} = com.raycast.macos || test %{app-bundle-id} = com.1password.1password || test %{app-bundle-id} = com.apple.systempreferences || test %{app-bundle-id} = com.apple.calculator || test %{app-bundle-id} = com.apple.quicklook.QuickLookUIService'
+run = 'layout floating'

@@ -1,0 +1,79 @@
+# Configuration management
+brew "chezmoi"
+brew "just"
+
+# Shells
+brew "fish"
+brew "nushell"
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
+
+# Prompt and terminal sessions
+brew "starship"
+brew "zellij"
+
+# Git
+brew "git"
+brew "gh"
+brew "git-delta"
+brew "gitui"
+brew "lazygit"
+brew "commitizen"
+
+# Shell history and navigation
+brew "atuin"
+brew "direnv"
+brew "zoxide"
+brew "fzf"
+
+# Files and viewing
+brew "bat"
+brew "eza"
+brew "fd"
+brew "yazi"
+brew "glow"
+
+# Yazi previewers and plugin dependencies. Yazi degrades quietly when these are
+# absent: the preview pane simply falls back to plain file(1) output.
+brew "ffmpeg"      # video thumbnails
+brew "sevenzip"    # archive listing
+brew "poppler"     # PDF previews
+brew "imagemagick" # SVG, HEIC, AVIF, JXL previews
+brew "resvg"       # faster SVG rendering
+brew "duckdb"      # CSV, TSV, Parquet and database previews
+brew "mediainfo"   # media metadata
+brew "ouch"        # archive preview and extraction
+
+# Search and text processing
+brew "ripgrep"
+brew "ripgrep-all"
+brew "sd"
+brew "jq"
+brew "yq"
+brew "miller"
+
+# Monitoring and storage
+brew "btop"
+brew "bottom"
+brew "duf"
+brew "dust"
+
+# Network utilities
+brew "wget"
+brew "xh"
+
+# General utilities
+brew "tree"
+
+# Editors
+brew "neovim"
+brew "helix"
+
+# Python
+brew "uv"
+
+# Existing Homebrew-managed applications
+cask "codex"
+cask "claude-code"
+cask "font-jetbrains-mono-nerd-font"
+

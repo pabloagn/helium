@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+{{- if .firefoxPersonalProfile }}
+exec "$HOME/.local/bin/helium-firefox" {{ .firefoxPersonalProfile | quote }} "$@"
+{{- else }}
+echo "Firefox personal profile is not configured in Chezmoi." >&2
+exit 1
+{{- end }}
