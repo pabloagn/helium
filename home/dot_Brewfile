@@ -106,4 +106,10 @@ cask "font-jetbrains-mono-nerd-font"
 # worktree, with a diff-first review UI. Works alongside VS Code rather than
 # replacing it.
 cask "conductor"
+# Fantastical: each Google account is added inside the app and authenticated
+# against the Google Calendar API directly, so it never routes through macOS
+# Internet Accounts. That is the point -- Calendar.app reaches Google over
+# CalDAV, which drops whenever the OAuth refresh token expires. Calendar Sets
+# group the AtmosphericAI and personal accounts the way the Firefox profiles do.
+cask "fantastical"
 
