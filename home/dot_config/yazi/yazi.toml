@@ -10,6 +10,7 @@ sort_sensitive = false
 sort_reverse = false
 sort_dir_first = true
 sort_translit = false
+sort_fallback = "alphabetical"
 linemode = "size_and_mtime"
 show_hidden = false
 show_symlink = true
@@ -17,17 +18,77 @@ scrolloff = 5
 mouse_events = ["click", "scroll", "touch", "move", "drag"]
 
 [preview]
+wrap = "no"
 tab_size = 2
 max_width = 2000
+max_height = 1200
 image_filter = "nearest"
-image_quality = 70
+image_quality = 75
 image_delay = 20
 
+# Yazi 26 renamed these. Rhodium set `micro_workers` / `macro_workers`, which
+# no longer exist and were being ignored outright -- the parallelism it asked
+# for was never applied. These are the current names.
 [tasks]
-micro_workers = 10
-macro_workers = 25
+file_workers = 5
+plugin_workers = 10
+fetch_workers = 10
+preload_workers = 5
+process_workers = 10
 bizarre_retry = 5
+image_alloc = 536870912
+image_bound = [10000, 10000]
 suppress_preload = false
+
+# Dialog placement, ported from Rhodium. Note Yazi 26 moved the destructive
+# prompts out of [input] into [confirm]; keeping them under [input], as Rhodium
+# had them, would have been silently dropped.
+[input]
+cursor_blink = false
+cd_title = "Change directory:"
+cd_origin = "top-center"
+cd_offset = [0, 2, 50, 3]
+create_title = ["Create:", "Create (dir):"]
+create_origin = "top-center"
+create_offset = [0, 2, 50, 3]
+rename_title = "Rename:"
+rename_origin = "hovered"
+rename_offset = [0, 1, 50, 3]
+filter_title = "Filter:"
+filter_origin = "top-center"
+filter_offset = [0, 2, 50, 3]
+find_title = ["Find next:", "Find previous:"]
+find_origin = "top-center"
+find_offset = [0, 2, 50, 3]
+search_title = "Search via {n}:"
+search_origin = "top-center"
+search_offset = [0, 2, 50, 3]
+shell_title = ["Shell:", "Shell (block):"]
+shell_origin = "top-center"
+shell_offset = [0, 2, 50, 3]
+
+[confirm]
+trash_title = "Move {n} selected file{s} to trash?"
+trash_origin = "center"
+trash_offset = [0, 0, 70, 20]
+delete_title = "Permanently delete {n} selected file{s}?"
+delete_origin = "center"
+delete_offset = [0, 0, 70, 20]
+overwrite_title = "Overwrite file?"
+overwrite_body = "Will overwrite the following file:"
+overwrite_origin = "center"
+overwrite_offset = [0, 0, 50, 15]
+quit_title = "Quit?"
+quit_body = "{n} task{s} still running, are you sure you want to quit?"
+quit_origin = "center"
+quit_offset = [0, 0, 50, 15]
+
+# Rhodium called this [select]; Yazi 26 renamed it to [pick]. This is the
+# "Open with:" chooser that Shift+O brings up.
+[pick]
+open_title = "Open with:"
+open_origin = "hovered"
+open_offset = [0, 1, 50, 12]
 
 [which]
 sort_by = "none"
@@ -39,14 +100,32 @@ sort_translit = false
 enabled = false
 
 [opener]
+# Terminal editors block Yazi while they run; GUI editors are orphaned so Yazi
+# stays usable. None of the GUI editors ship a CLI on PATH here, so each goes
+# through `open -a`.
 edit = [
   { run = '${EDITOR:-nvim} "$@"', desc = "$EDITOR", block = true, for = "unix" },
 ]
-zed = [
+edit-helix = [
+  { run = 'hx "$@"', desc = "Helix", block = true, for = "unix" },
+]
+edit-vim = [
+  { run = 'vim "$@"', desc = "Vim", block = true, for = "unix" },
+]
+edit-nano = [
+  { run = 'nano "$@"', desc = "Nano", block = true, for = "unix" },
+]
+edit-zed = [
   { run = 'open -a Zed "$@"', desc = "Zed", orphan = true, for = "macos" },
 ]
-vscode = [
+edit-code = [
   { run = 'open -a "Visual Studio Code" "$@"', desc = "VS Code", orphan = true, for = "macos" },
+]
+edit-cursor = [
+  { run = 'open -a Cursor "$@"', desc = "Cursor", orphan = true, for = "macos" },
+]
+edit-pycharm = [
+  { run = 'open -a PyCharm "$@"', desc = "PyCharm", orphan = true, for = "macos" },
 ]
 open = [
   { run = 'open "$@"', desc = "System default", orphan = true, for = "macos" },
@@ -63,27 +142,57 @@ browser-personal = [
 browser-atmospheric = [
   { run = '"$HOME/.local/bin/ff-atmospheric" "$@"', desc = "Firefox (AtmosphericAI)", orphan = true, for = "macos" },
 ]
+browser-private = [
+  { run = '"$HOME/.local/bin/ff-private" "$@"', desc = "Firefox (Private)", orphan = true, for = "macos" },
+]
+safari = [
+  { run = 'open -a Safari "$@"', desc = "Safari", orphan = true, for = "macos" },
+]
 extract = [
   { run = 'ouch decompress -- "$@"', desc = "Extract here", for = "unix" },
 ]
-
-# `prepend_rules` keeps Yazi's own defaults as the fallback, so these only need
-# to cover the cases where the default choice is wrong.
+# `prepend_rules` keeps Yazi's own defaults as a final fallback. Every code and
+# text rule offers the full editor chain, so Shift+O (open --interactive) lists
+# all of them rather than just $EDITOR -- this mirrors Rhodium, which put
+# edit/helix/zed/nano/emacs on every such rule.
 [open]
 prepend_rules = [
-  { url = "*/", use = ["edit", "zed", "reveal"] },
-  { url = "*.{html,htm,xhtml}", use = ["browser-personal", "browser-atmospheric", "edit", "zed", "reveal"] },
-  { url = "*.{csv,tsv,parquet}", use = ["edit", "open", "reveal"] },
-  { url = "*.{md,markdown,txt,text,log,rst,tex}", use = ["edit", "zed", "open", "reveal"] },
-  { url = "*.pdf", use = ["open", "preview", "reveal"] },
-  { url = "*.svg", use = ["open", "edit", "reveal"] },
+  # Directories: open the folder as a project.
+  { url = "*/", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "open", "reveal"] },
+
+  # Code and configuration
+  { url = "*.{js,jsx,ts,tsx,mjs,cjs,py,rs,go,c,cpp,h,hpp,java,kt,rb,php,lua,vim,sh,bash,zsh,fish,nu,ps1,swift,scala,clj,ex,exs,erl,hs,ml,jl,r,R,sql,graphql,proto,tf,nix,dockerfile}", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "open", "reveal"] },
+  { url = "*.{json,jsonc,json5,yaml,yml,toml,ini,conf,cfg,env,properties,plist}", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "open", "reveal"] },
+  { url = "*.{css,scss,sass,less,styl}", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "open", "reveal"] },
+  { url = "*.{md,markdown,rst,tex,typ,org,adoc,txt,text,log}", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "open", "reveal"] },
+  { url = "*.{xml,xsl,xsd,csv,tsv,parquet,xlsx}", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "open", "reveal"] },
+
+  # Python gets PyCharm as an extra option.
+  { url = "*.py", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "edit-pycharm", "open", "reveal"] },
+
+  # HTML is both markup and something to render.
+  { url = "*.{html,htm,xhtml}", use = ["browser-personal", "browser-atmospheric", "browser-private", "safari", "edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "reveal"] },
+
+  # SVG is both an image and code.
+  { url = "*.svg", use = ["open", "preview", "edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "reveal"] },
+
+  # Media and documents: viewers first, editors still reachable.
+  { url = "*.{jpg,jpeg,png,gif,webp,bmp,ico,tiff,avif,heic,heif}", use = ["open", "preview", "reveal"] },
+  { url = "*.pdf", use = ["open", "preview", "browser-personal", "browser-atmospheric", "browser-private", "safari", "reveal"] },
   { mime = "image/*", use = ["open", "preview", "reveal"] },
   { mime = "{audio,video}/*", use = ["open", "reveal"] },
+
+  # Archives
   { mime = "application/{,g}zip", use = ["extract", "open", "reveal"] },
   { mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}", use = ["extract", "open", "reveal"] },
-  { mime = "text/*", use = ["edit", "zed", "open", "reveal"] },
-  { mime = "application/{json,x-ndjson}", use = ["edit", "zed", "reveal"] },
-  { mime = "inode/x-empty", use = ["edit", "zed", "reveal"] },
+
+  # Office
+  { url = "*.{doc,docx,odt,rtf,xls,xlsm,ods,ppt,pptx,odp}", use = ["open", "reveal"] },
+
+  # Anything textual, and empty files, still get the full editor chain.
+  { mime = "text/*", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "open", "reveal"] },
+  { mime = "application/{json,x-ndjson}", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "browser-personal", "browser-atmospheric", "browser-private", "safari", "reveal"] },
+  { mime = "inode/empty", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "reveal"] },
 ]
 
 [plugin]
@@ -104,8 +213,14 @@ prepend_previewers = [
   # Markdown goes through piper, not the glow.yazi plugin: that plugin is
   # deprecated upstream in favour of piper and calls Command:args(), which Yazi
   # 26 renamed to :arg() -- every peek raised "attempt to call a nil value".
-  # CLICOLOR_FORCE makes glow emit colour even though its stdout is a pipe.
-  { url = "*.{md,markdown}", run = 'piper -- CLICOLOR_FORCE=1 glow --style=dark -w=$w "$1"' },
+  #
+  # Three details are load-bearing:
+  #   * -s points at the kanso glow stylesheet, so previews match every other
+  #     theme on this machine rather than glow's generic "dark".
+  #   * CLICOLOR_FORCE makes glow emit colour even though stdout is a pipe.
+  #   * </dev/null is required. glow 3.0 blocks forever reading inherited stdin,
+  #     which hangs the whole preview pane.
+  { url = "*.{md,markdown}", run = 'piper -- CLICOLOR_FORCE=1 glow -s="$HOME/.config/glow/kanso.json" -w=$w "$1" </dev/null' },
   { mime = "application/{,g}zip", run = "ouch" },
   { mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}", run = "ouch" },
 ]

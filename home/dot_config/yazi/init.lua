@@ -41,16 +41,34 @@ function Tabs.height()
 	return 1
 end
 
+-- Fixed-width columns. Yazi composes the linemode from ordered children: this
+-- one renders first, then git.yazi's status sign at order 1500 with a single
+-- leading space. If this returns a variable-width string, every column to the
+-- right ragged-shifts per row -- which is why size, mtime and the git sign all
+-- ran together. Padding both fields to a constant width keeps mtime and the git
+-- sign in the same screen column on every line.
+local SIZE_W = 7 -- ya.readable_size divides while size > 1024, so the widest
+                 -- possible output is "1023.9K" -- seven characters.
+local TIME_W = 12 -- "Aug 13 17:54" and "Aug 13  2024" are both 12
+
 function Linemode:size_and_mtime()
-	local time = math.floor(self._file.cha.mtime or 0)
-	if time == 0 then
-		time = ""
-	elseif os.date("%Y", time) == os.date("%Y") then
-		time = os.date("%b %d %H:%M", time)
-	else
-		time = os.date("%b %d  %Y", time)
+	local size = self._file:size()
+	local s = "-"
+	if size then
+		s = ya.readable_size(size)
 	end
 
-	local size = self._file:size()
-	return string.format("%s %s", size and ya.readable_size(size) or "-", time)
+	local time = math.floor(self._file.cha.mtime or 0)
+	local t = ""
+	if time > 0 then
+		if os.date("%Y", time) == os.date("%Y") then
+			t = os.date("%b %d %H:%M", time)
+		else
+			t = os.date("%b %d  %Y", time)
+		end
+	end
+
+	-- Right-align the size, left-pad the date to a constant width, and keep a
+	-- trailing space so git's sign never touches the date.
+	return string.format("%" .. SIZE_W .. "s  %-" .. TIME_W .. "s ", s, t)
 end

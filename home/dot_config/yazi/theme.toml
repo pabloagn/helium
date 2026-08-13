@@ -19,6 +19,9 @@ count_selected = { fg = "#090E13", bg = "#E6C384" }
 find_keyword = { fg = "#B98D7B", bg = "#090E13" }
 find_position = {}
 
+symlink_target = { fg = "#6B7E84", italic = true }
+marker_symbol = "▍"
+
 border_symbol = "│"
 border_style = { fg = "#C5C9C7" }
 
@@ -60,11 +63,6 @@ title = {}
 value = {}
 selected = { reversed = true }
 
-[completion]
-border = { fg = "#7FB4CA" }
-active = { reversed = true }
-inactive = {}
-
 [tasks]
 border = { fg = "#7FB4CA" }
 title = {}
@@ -93,8 +91,24 @@ title_error = { fg = "#E46876" }
 
 [indicator]
 padding = { open = "█", close = "█" }
+parent = { reversed = true }
 current = { reversed = true }
 preview = { reversed = true }
+
+[confirm]
+border = { fg = "#7FB4CA" }
+title = { fg = "#E6C384" }
+body = {}
+list = { fg = "#8EA4A2" }
+btn_yes = { fg = "#090E13", bg = "#87A987", bold = true }
+btn_no = { fg = "#090E13", bg = "#E46876", bold = true }
+btn_labels = ["  [Y]es  ", "  (N)o  "]
+
+[spot]
+border = { fg = "#7FB4CA" }
+title = { fg = "#E6C384" }
+tbl_col = { fg = "#8BA4B0", bold = true }
+tbl_cell = { fg = "#0D0C0C", bg = "#E6C384" }
 
 [filetype]
 rules = [

@@ -68,6 +68,12 @@ brew "tree"
 # Editors
 brew "neovim"
 brew "helix"
+# tree-sitter CLI lets nvim-treesitter build grammars that ship as grammar.js
+# rather than checked-in C (latex is one). This is tree-sitter-cli, not
+# tree-sitter: the latter is the library and ships no binary. node is needed
+# only for that generation step, never at runtime.
+brew "tree-sitter-cli"
+brew "node"
 
 # Python
 brew "uv"

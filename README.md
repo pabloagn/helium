@@ -16,9 +16,10 @@ The repository is the source of truth. Files in `$HOME` are managed outputs.
 ## Managed tools
 
 Helium currently owns configuration for Zsh, Fish, login-shell presentation, Git and Delta, Atuin,
-Ghostty, Yazi, Zed, Karabiner-Elements, and AeroSpace. See the
+Ghostty, Yazi, Zed, Neovim, Helix, Karabiner-Elements, and AeroSpace. See the
 [AeroSpace workflow](docs/aerospace.md) for the workspace model and complete
-shortcut reference.
+shortcut reference, and [Editors](docs/editors.md) for how the Neovim and Helix
+configurations were ported from Rhodium.
 
 ## Current-machine workflow
 

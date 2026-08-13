@@ -39,6 +39,8 @@ doctor:
     just aerospace-check
     YAZI_CONFIG_HOME="{{root}}/home/dot_config/yazi" yazi --debug >/dev/null
     nvim --headless '+qa'
+    nvim --headless '+Lazy! check' '+qa'
+    hx --health >/dev/null
 
 secrets-check:
     @if rg -n -i '(password|secret|token|api[_-]?key|private[_-]?key)' "{{root}}" --glob '!README.md' --glob '!.git/**'; then \
