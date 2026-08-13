@@ -19,6 +19,20 @@ brew "git-delta"
 brew "gitui"
 brew "lazygit"
 brew "commitizen"
+# Syntax-aware diffs. Understands structure rather than lines, which makes
+# reviewing generated or refactored code far less noisy than a textual diff.
+brew "difftastic"
+# Jujutsu: Git-compatible VCS with first-class stacked changes, and the VCS
+# GitHub's stacked-PR preview explicitly supports. Colocates with an existing
+# Git repo, so adopting it is reversible.
+brew "jj"
+
+# Code quality gates. Hooks guard the front door, CI watches the perimeter --
+# with agents writing at speed, the front door is what catches things early.
+brew "lefthook"   # one binary, one config, every git hook
+brew "gitleaks"   # secret scanning; replaces the hand-rolled rg check in justfile
+brew "semgrep"    # semantic static analysis
+brew "act"        # run GitHub Actions locally instead of push-wait-fail
 
 # Shell history and navigation
 brew "atuin"
@@ -75,11 +89,21 @@ brew "helix"
 brew "tree-sitter-cli"
 brew "node"
 
-# Python
+# Python. The 2026 toolchain converged on uv + Ruff + a Rust type checker.
 brew "uv"
+brew "ruff"
+# Pyrefly reached stable 1.0 in May 2026 and is dramatically faster than mypy
+# (seconds rather than minutes on large trees) at a fraction of the memory.
+# Astral's `ty` is the likely long-term successor but is still alpha, so it is
+# deliberately not pinned here yet.
+brew "pyrefly"
 
 # Existing Homebrew-managed applications
 cask "codex"
 cask "claude-code"
 cask "font-jetbrains-mono-nerd-font"
+# Conductor: runs Claude Code sessions in parallel, each in its own git
+# worktree, with a diff-first review UI. Works alongside VS Code rather than
+# replacing it.
+cask "conductor"
 
