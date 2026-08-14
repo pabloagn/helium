@@ -34,8 +34,22 @@ cursor-style-blink = false
 shell-integration = detect
 shell-integration-features = no-cursor,sudo,title
 
-scrollback-limit = 100000
+# scrollback-limit is BYTES, not lines. This was previously 100000 -- 100 KB,
+# a hundred times *smaller* than Ghostty's 10 MB default, which is why history
+# vanished so fast. 1 GiB is effectively a whole session's worth.
+#
+# Ghostty allocates the buffer lazily, so a large limit costs nothing until the
+# scrollback actually grows into it. The buffer is per surface and lives in
+# memory. Ghostty cannot do truly unlimited scrollback yet -- its own docs call
+# that a "future planned feature" -- so this is the practical maximum approach.
+scrollback-limit = 1073741824
 mouse-hide-while-typing = true
+# One wheel notch = one line. Ghostty's default is "discrete:3", so every notch
+# of a wheel mouse was sending three scroll events -- which in Yazi meant the
+# cursor jumping several files at a time. Trackpads are "precision" devices and
+# already default to 1; both are pinned here so the behaviour is explicit.
+# The precision:/discrete: prefixes require Ghostty 1.2.1 or newer.
+mouse-scroll-multiplier = precision:1,discrete:1
 copy-on-select = clipboard
 confirm-close-surface = false
 

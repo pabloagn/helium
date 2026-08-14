@@ -129,12 +129,10 @@ cask "amie"
 # because the app self-updates via electron-updater. `brew upgrade` is therefore
 # a no-op for it unless called with --greedy.
 tap "stablyai/orca"
-# no_quarantine: Orca is not Apple-notarized, so the downloaded .dmg arrives with
-# com.apple.quarantine set and Gatekeeper refuses to launch it ("Apple could not
-# verify orca is free of malware"). This tells Homebrew not to attach that
-# attribute for this cask only -- Gatekeeper stays fully enabled system-wide.
 # Fully qualified on purpose. A bare `cask "orca"` resolves to homebrew-cask's
 # core orca -- Plotly's chart exporter, which is Intel-only, unsigned, and
-# deprecated for failing Gatekeeper. Different app entirely.
+# deprecated for failing Gatekeeper. Different app entirely, and the source of
+# the "Apple could not verify orca" alert: that build is unsigned, so no
+# no_quarantine flag would have helped. The real Orca is properly signed.
 cask "stablyai/orca/orca"
 

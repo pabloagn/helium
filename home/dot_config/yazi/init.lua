@@ -4,6 +4,15 @@
 -- "attempt to concatenate a nil value" on every peek because its options table
 -- had never been populated.
 
+-- Cross-instance yank. Yazi instances talk over DDS (a local pub/sub socket),
+-- but sharing the yank register is opt-in: without this, yanking in one
+-- terminal's Yazi is invisible to another. `session` is a bundled preset
+-- plugin, so nothing needs installing.
+--
+-- The yank is published as `@yank`, a *static* message, which Yazi persists and
+-- restores for new instances -- so a yank also survives quitting and reopening.
+require("session"):setup({ sync_yanked = true })
+
 require("full-border"):setup({ type = ui.Border.ROUNDED })
 
 require("git"):setup({ order = 1500 })
