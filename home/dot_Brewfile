@@ -112,4 +112,29 @@ cask "conductor"
 # CalDAV, which drops whenever the OAuth refresh token expires. Calendar Sets
 # group the AtmosphericAI and personal accounts the way the Firefox profiles do.
 cask "fantastical"
+# Amie: also native, keyboard-driven throughout. Installed alongside Fantastical
+# to trial both; drop the loser. Note Amie syncs through its own backend rather
+# than authenticating locally, which is worth checking before a work Workspace
+# account goes in it.
+cask "amie"
+
+# Third-party tap, reviewed per the policy in README.md. Orca is an Agent
+# Development Environment: it runs Claude Code, Codex and 30+ other CLI agents
+# side by side, each in its own git worktree, and drives them with your existing
+# subscriptions rather than proxying through a vendor. MIT licensed.
+#
+# Tap review: Casks/orca.rb in stablyai/homebrew-orca downloads the .dmg from
+# github.com/stablyai/orca/releases with a matching `verified:` owner, pins a
+# per-architecture sha256, declares no install scripts, and sets auto_updates
+# because the app self-updates via electron-updater. `brew upgrade` is therefore
+# a no-op for it unless called with --greedy.
+tap "stablyai/orca"
+# no_quarantine: Orca is not Apple-notarized, so the downloaded .dmg arrives with
+# com.apple.quarantine set and Gatekeeper refuses to launch it ("Apple could not
+# verify orca is free of malware"). This tells Homebrew not to attach that
+# attribute for this cask only -- Gatekeeper stays fully enabled system-wide.
+# Fully qualified on purpose. A bare `cask "orca"` resolves to homebrew-cask's
+# core orca -- Plotly's chart exporter, which is Intel-only, unsigned, and
+# deprecated for failing Gatekeeper. Different app entirely.
+cask "stablyai/orca/orca"
 
