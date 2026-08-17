@@ -126,6 +126,9 @@ cask "fantastical"
 # than authenticating locally, which is worth checking before a work Workspace
 # account goes in it.
 cask "amie"
+# PDF Expert: full PDF reader and editor. Handles large and complex files that
+# Preview struggles with, plus text editing, form filling and annotation.
+cask "pdf-expert"
 
 # Third-party tap, reviewed per the policy in README.md. Orca is an Agent
 # Development Environment: it runs Claude Code, Codex and 30+ other CLI agents
