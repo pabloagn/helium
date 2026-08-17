@@ -1,0 +1,22 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+
+# Keyboard repeat speed and repeat delay, in ticks.
+# GUI tools label a tick as 15 ms, so they show 15 ms and 135 ms here.
+# The real tick is 1/60 s (16.667 ms), measured from IOHIDSystem on this Mac.
+# So the true timings are 16.7 ms and 150 ms.
+# The System Settings sliders stop at KeyRepeat 2 and InitialKeyRepeat 15.
+# `defaults` accepts values below those limits.
+defaults write -g KeyRepeat -int 1
+defaults write -g InitialKeyRepeat -int 9
+
+# Hold a key to repeat it, instead of showing the accent popup.
+# HIToolbox reads this key in its Text Services Manager code.
+# Apple already excludes com.apple.Terminal, org.vim.MacVim, org.gnu.Emacs,
+# org.gnu.Aquamacs and se.bzero.Vico from press-and-hold. Ghostty is not on
+# that list, so it needs this global key.
+defaults write -g ApplePressAndHoldEnabled -bool false
+
+echo "Keyboard defaults written. Log out and log in to apply them."
+{{- end }}

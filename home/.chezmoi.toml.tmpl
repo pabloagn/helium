@@ -4,6 +4,7 @@
 {{- $firefoxAtmosphericProfile := promptStringOnce . "firefoxAtmosphericProfile" "Firefox AtmosphericAI profile path (blank to disable)" -}}
 {{- $firefoxPersonalProfile := promptStringOnce . "firefoxPersonalProfile" "Firefox personal profile path (blank to disable)" -}}
 {{- $firefoxPrivateProfile := promptStringOnce . "firefoxPrivateProfile" "Firefox private profile path (blank to disable)" -}}
+{{- $firefoxMediaProfile := promptStringOnce . "firefoxMediaProfile" "Firefox media profile path (blank to disable)" -}}
 
 [data]
     profile = {{ $profile | quote }}
@@ -12,3 +13,4 @@
     firefoxAtmosphericProfile = {{ $firefoxAtmosphericProfile | quote }}
     firefoxPersonalProfile = {{ $firefoxPersonalProfile | quote }}
     firefoxPrivateProfile = {{ $firefoxPrivateProfile | quote }}
+    firefoxMediaProfile = {{ $firefoxMediaProfile | quote }}

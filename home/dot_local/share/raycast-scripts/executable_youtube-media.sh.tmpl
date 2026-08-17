@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Required parameters:
+# @raycast.schemaVersion 1
+# @raycast.title YouTube | Media
+# @raycast.mode silent
+
+# Optional parameters:
+# @raycast.icon 📺
+# @raycast.packageName Firefox Profiles
+# @raycast.description Open YouTube in the Media Firefox profile
+{{- $media := dig "firefoxMediaProfile" "" . }}
+{{- if $media }}
+
+exec "$HOME/.local/bin/helium-firefox" {{ $media | quote }} "https://www.youtube.com/"
+{{- else }}
+
+echo "Firefox media profile is not configured in Chezmoi. Run: chezmoi init" >&2
+exit 1
+{{- end }}

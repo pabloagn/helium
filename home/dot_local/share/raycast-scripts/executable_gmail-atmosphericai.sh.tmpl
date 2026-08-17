@@ -2,16 +2,16 @@
 
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title Firefox | AtmosphericAI
+# @raycast.title Gmail | AtmosphericAI
 # @raycast.mode silent
 
 # Optional parameters:
-# @raycast.icon 🦊
+# @raycast.icon 📧
 # @raycast.packageName Firefox Profiles
-# @raycast.description Open the AtmosphericAI Firefox profile in a new window
+# @raycast.description Open Gmail in the AtmosphericAI Firefox profile
 {{- if .firefoxAtmosphericProfile }}
 
-exec "$HOME/.local/bin/helium-firefox" {{ .firefoxAtmosphericProfile | quote }}
+exec "$HOME/.local/bin/helium-firefox" {{ .firefoxAtmosphericProfile | quote }} "https://mail.google.com/"
 {{- else }}
 
 echo "Firefox AtmosphericAI profile is not configured in Chezmoi." >&2

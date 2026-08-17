@@ -5,3 +5,4 @@
     firefoxAtmosphericProfile = "/tmp/firefox-atmospheric"
     firefoxPersonalProfile = "/tmp/firefox-personal"
     firefoxPrivateProfile = "/tmp/firefox-private"
+    firefoxMediaProfile = "/tmp/firefox-media"

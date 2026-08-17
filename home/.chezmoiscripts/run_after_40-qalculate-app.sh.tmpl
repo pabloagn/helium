@@ -1,0 +1,35 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+
+# Homebrew installs `qalculate-qt.app` inside the Cellar, where nothing looks for
+# applications. Two things do not work as a fix. A symlink is indexed by
+# Spotlight as a symlink rather than as its target, so Raycast never resolves an
+# app bundle from it. A copy into ~/Applications is indexed correctly but stays
+# invisible to Raycast, which reads only the folders it holds a permission for.
+# So the bundle is copied into /Applications, which Raycast always scans. That
+# directory is group-writable by admin, so this needs no sudo.
+#
+# This runs on every apply rather than on change, because the copy has to be
+# refreshed after `brew upgrade` bumps the version in the Cellar. rsync writes
+# nothing when the two trees already match, so the cost is one stat pass.
+
+if ! command -v brew >/dev/null 2>&1; then
+    echo "Homebrew must be installed before applying Helium." >&2
+    exit 1
+fi
+
+src="$(brew --prefix)/opt/qalculate-qt/qalculate-qt.app"
+dst="/Applications/Qalculate.app"
+
+if [ ! -d "$src" ]; then
+    echo "qalculate-qt is not installed yet; skipped the /Applications copy." >&2
+    exit 0
+fi
+
+rsync -a --delete "$src/" "$dst/"
+
+# Drop the copy an earlier revision of this script left in ~/Applications, so
+# Raycast and Spotlight never offer the same calculator twice.
+rm -rf "$HOME/Applications/Qalculate.app"
+{{- end }}

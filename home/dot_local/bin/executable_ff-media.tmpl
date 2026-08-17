@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+{{- $media := dig "firefoxMediaProfile" "" . }}
+{{- if $media }}
+exec "$HOME/.local/bin/helium-firefox" {{ $media | quote }} "$@"
+{{- else }}
+echo "Firefox media profile is not configured in Chezmoi. Run: chezmoi init" >&2
+exit 1
+{{- end }}

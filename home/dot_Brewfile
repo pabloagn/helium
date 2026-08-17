@@ -98,6 +98,15 @@ brew "ruff"
 # deliberately not pinned here yet.
 brew "pyrefly"
 
+# Qalculate!: scientific calculator with a symbolic solver, unit and currency
+# conversion, and plotting. A formula rather than a cask because upstream ships
+# no macOS binary, so Homebrew compiles the Qt front end itself and leaves
+# `qalculate-qt.app` inside the Cellar. `run_after_40-qalculate-app.sh.tmpl`
+# copies that bundle into /Applications, which is what makes it reachable from
+# Raycast. The formula also pulls in libqalculate, whose `qalc` command is the
+# same engine on the terminal.
+brew "qalculate-qt"
+
 # Existing Homebrew-managed applications
 cask "codex"
 cask "claude-code"
