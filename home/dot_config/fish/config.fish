@@ -2,6 +2,9 @@ set -gx EDITOR nvim
 set -gx VISUAL nvim
 set -gx PAGER less
 set -gx BAT_THEME ansi
+# Silence direnv's per-load "export +VAR ..." dump. Mirrors the same line in
+# ~/.zshrc; direnv reads this on every load, so an empty format hides all of it.
+set -gx DIRENV_LOG_FORMAT ""
 
 fish_add_path /opt/homebrew/bin
 fish_add_path "$HOME/.local/bin"
