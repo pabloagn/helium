@@ -2,18 +2,18 @@
 
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title LinkedIn | Personal
+# @raycast.title Unsplash | Personal
 # @raycast.mode silent
 
 # Optional parameters:
 # @raycast.icon icons/helium.png
 # @raycast.iconDark icons/helium-dark.png
 # @raycast.packageName Firefox Profiles
-# @raycast.description Open LinkedIn in the Personal Firefox profile
+# @raycast.description Open Unsplash in the Personal Firefox profile
 {{- $personal := dig "firefoxPersonalProfile" "" . }}
 {{- if $personal }}
 
-exec "$HOME/.local/bin/helium-firefox" {{ $personal | quote }} "https://www.linkedin.com/"
+exec "$HOME/.local/bin/helium-firefox" {{ $personal | quote }} "https://unsplash.com/"
 {{- else }}
 
 echo "Firefox personal profile is not configured in Chezmoi. Run: chezmoi init" >&2

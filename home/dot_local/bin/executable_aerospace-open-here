@@ -3,10 +3,21 @@ set -eu
 
 aerospace_bin=/opt/homebrew/bin/aerospace
 
-if [ "$#" -lt 2 ]; then
-  echo "usage: aerospace-open-here <bundle-id> <command> [args...]" >&2
+if [ "$#" -lt 3 ]; then
+  echo "usage: aerospace-open-here <h|v> <bundle-id> <command> [args...]" >&2
   exit 2
 fi
+
+# h pairs the new window beside the focused one, v pairs it below.
+case "$1" in
+  h) root_layout=h_tiles ;;
+  v) root_layout=v_tiles ;;
+  *)
+    echo "aerospace-open-here: orientation must be h or v, got '$1'" >&2
+    exit 2
+    ;;
+esac
+shift
 
 bundle_id=$1
 shift
@@ -16,9 +27,10 @@ focused_window=$($aerospace_bin list-windows --focused --format '%{window-id}')
 before_ids=$($aerospace_bin list-windows --monitor all --app-bundle-id "$bundle_id" --format '%{window-id}')
 
 # A tiled workspace cannot reserve an empty half. Prepare the current window and
-# root as horizontal tiles; the new sibling will create the actual 50/50 split.
+# root as tiles in the requested orientation; the new sibling will create the
+# actual 50/50 split.
 $aerospace_bin layout --window-id "$focused_window" tiling
-$aerospace_bin layout --workspace "$workspace" --root h_tiles
+$aerospace_bin layout --workspace "$workspace" --root "$root_layout"
 
 "$@" >/dev/null 2>&1 &
 
@@ -40,7 +52,7 @@ while [ "$attempt" -lt 100 ]; do
       sleep 0.2
       $aerospace_bin layout --window-id "$candidate_id" tiling
       $aerospace_bin move-node-to-workspace --window-id "$candidate_id" -- "$workspace"
-      $aerospace_bin layout --workspace "$workspace" --root h_tiles
+      $aerospace_bin layout --workspace "$workspace" --root "$root_layout"
       $aerospace_bin balance-sizes --workspace "$workspace"
       $aerospace_bin focus --window-id "$candidate_id"
       exit 0

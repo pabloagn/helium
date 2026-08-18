@@ -1,0 +1,31 @@
+{
+  "kanso-zen": {
+    "display:name": "Kanso Zen",
+    "display:order": 1,
+
+    "background": "#090E13",
+    "foreground": "#C5C9C7",
+    "cursorAccent": "#090E13",
+    "selectionBackground": "#393B44",
+    "gray": "#A4A7A4",
+    "cmdtext": "#C5C9C7",
+
+    "black": "#0d0c0c",
+    "red": "#c4746e",
+    "green": "#8a9a7b",
+    "yellow": "#c4b28a",
+    "blue": "#8ba4b0",
+    "magenta": "#a292a3",
+    "cyan": "#8ea4a2",
+    "white": "#C8C093",
+
+    "brightBlack": "#A4A7A4",
+    "brightRed": "#E46876",
+    "brightGreen": "#87a987",
+    "brightYellow": "#E6C384",
+    "brightBlue": "#7FB4CA",
+    "brightMagenta": "#938AA9",
+    "brightCyan": "#7AA89F",
+    "brightWhite": "#C5C9C7"
+  }
+}

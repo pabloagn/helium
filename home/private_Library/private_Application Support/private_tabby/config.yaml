@@ -1,0 +1,86 @@
+# Tabby merges this file over its own defaults, so only the settings that
+# differ need to be here. Everything left out -- the whole hotkey table, the
+# profile list -- keeps Tabby's macOS default.
+#
+# WARNING: Tabby rewrites this file itself whenever you change a setting in its
+# UI, and again when it quits. That overwrites whatever chezmoi put here. Treat
+# the repo as the source of truth: edit the repo, then `just apply`, then
+# restart Tabby. Do not tune Tabby from its own settings screen and expect the
+# change to survive.
+
+version: 8
+profiles: []
+groups: []
+
+enableAnalytics: false
+enableWelcomeTab: false
+
+terminal:
+  # Same font pair as Ghostty and kitty. Tabby takes exactly one fallback,
+  # which is why JetBrains Mono carries every Nerd Font icon on its own.
+  font: Berkeley Mono Rh
+  fallbackFont: JetBrainsMono Nerd Font Mono
+  fontSize: 14
+  linePadding: 2
+
+  # Berkeley Mono Rh has no ligatures worth enabling, and Tabby's ligature
+  # renderer costs frames on the WebGL frontend.
+  ligatures: false
+  frontend: xterm-webgl
+
+  cursor: block
+  cursorBlink: false
+
+  bell: 'off'
+  copyOnSelect: true
+  rightClick: menu
+  scrollbackLines: 100000
+  warnOnMultilinePaste: false
+  trimWhitespaceOnPaste: true
+
+  # "colorScheme" makes the terminal use the background below. The default,
+  # "theme", would paint Tabby's own UI colour behind the text and ignore it.
+  background: colorScheme
+
+  # minimumContrastRatio defaults to 4, which silently lightens any colour that
+  # lands too close to the background. Kanso is a low-contrast palette on
+  # purpose, so that correction has to be off or it repaints half the theme.
+  minimumContrastRatio: 1
+
+  # --- Theme: Kanso Zen ---
+  # The same palette as Ghostty, kitty and Rhodium. `colors` is ordered 0-15:
+  # eight normal, then eight bright.
+  colorScheme:
+    name: Kanso Zen
+    foreground: '#C5C9C7'
+    background: '#090E13'
+    cursor: '#C5C9C7'
+    selection: '#393B44'
+    cursorAccent: '#090E13'
+    colors:
+      - '#0d0c0c'
+      - '#c4746e'
+      - '#8a9a7b'
+      - '#c4b28a'
+      - '#8ba4b0'
+      - '#a292a3'
+      - '#8ea4a2'
+      - '#C8C093'
+      - '#A4A7A4'
+      - '#E46876'
+      - '#87a987'
+      - '#E6C384'
+      - '#7FB4CA'
+      - '#938AA9'
+      - '#7AA89F'
+      - '#C5C9C7'
+
+appearance:
+  # Matches Ghostty's background-opacity 0.97 plus its blur. Tabby calls the
+  # blur "vibrancy"; it is the macOS window effect, not a shader.
+  opacity: 0.97
+  vibrancy: true
+  vibrancyType: blur
+  frame: thin
+  tabsLocation: top
+  colorSchemeMode: dark

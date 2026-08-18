@@ -1,0 +1,40 @@
+# Ported from Rhodium's home/apps/editors/neovide.nix, with three changes for
+# macOS: the font matches Ghostty rather than Rhodium's JetBrains Mono, srgb
+# stays off because Neovide already defaults it off on macOS, and the backtrace
+# path uses the real home directory.
+#
+# Anything to do with transparency is deliberately absent. Neovide reads opacity
+# from Neovim globals, not from this file. They are set in
+# ~/.config/nvim/lua/main.lua under "Neovide (GUI)".
+
+# --- Window behaviour ---
+fork = false
+frame = "full"
+idle = true
+maximized = false
+title-hidden = false
+vsync = true
+tabs = true
+
+# --- Rendering ---
+srgb = false
+no-multigrid = false
+
+# --- Mouse ---
+mouse-cursor-icon = "arrow"
+
+# --- Font ---
+# Same pair as Ghostty and in the same order. Berkeley Mono Rh has no Nerd Font
+# icon ranges, so JetBrains Mono carries the icons for Yazi, eza and starship.
+# Without the second entry those glyphs render as empty boxes.
+[font]
+normal = ["Berkeley Mono Rh", "JetBrainsMono Nerd Font Mono"]
+size = 14.0
+hinting = "full"
+edging = "antialias"
+
+# --- Box drawing ---
+# "native" draws the box characters itself instead of using the font's glyphs,
+# which removes the hairline gaps between them in Yazi and lazygit.
+[box-drawing]
+mode = "native"

@@ -2,9 +2,11 @@ local dirs = {
 	academic = vim.fn.expand("$HOME/academic"),
 	professional = vim.fn.expand("$HOME/professional"),
 	projects = vim.fn.expand("$HOME/dev"),
-	solenoidlabs = vim.fn.expand("$HOME/solenoid-labs"),
-	vaults = vim.fn.expand("$HOME/vaults"),
-	rhodium = vim.fn.expand("$HOME/dev/rhodium"),
+	-- Both repos live under ~/personal on this Mac. Rhodium previously pointed
+	-- at ~/dev/rhodium, which is the Rhodium (NixOS) layout and does not exist
+	-- here, so [fr] opened an empty picker.
+	helium = vim.fn.expand("$HOME/personal/helium"),
+	rhodium = vim.fn.expand("$HOME/personal/rhodium"),
 }
 
 -- Helper Functions
@@ -202,6 +204,13 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.keymap.set("n", "fd", make_directory, { buffer = true, silent = true, desc = "Make Directory" })
 		vim.keymap.set("n", "fp", make_project, { buffer = true, silent = true, desc = "Make Project" })
 
+		vim.keymap.set("n", "fh", function()
+			require("telescope.builtin").find_files({
+				prompt_title = "Helium",
+				cwd = dirs.helium,
+			})
+		end, { buffer = true, silent = true, desc = "Files Helium" })
+
 		vim.keymap.set("n", "fr", function()
 			require("telescope.builtin").find_files({
 				prompt_title = "Rhodium",
@@ -236,14 +245,6 @@ vim.api.nvim_create_autocmd("FileType", {
 			navigate_with_history(dirs.projects, "Projects")
 		end, { buffer = true, silent = true, desc = "Z Project" })
 
-		vim.keymap.set("n", "zs", function()
-			navigate_with_history(dirs.solenoidlabs, "Solenoid Labs")
-		end, { buffer = true, silent = true, desc = "Z Solenoid Labs" })
-
-		vim.keymap.set("n", "zv", function()
-			navigate_with_history(dirs.vaults, "Vaults")
-		end, { buffer = true, silent = true, desc = "Z Vault" })
-
 		-- Health check
 		vim.keymap.set("n", "hc", ":checkhealth<CR>", { buffer = true, silent = true, desc = "Health Check" })
 
@@ -255,7 +256,8 @@ vim.api.nvim_create_autocmd("FileType", {
 				"  [fn] Quick Note       - Create timestamped note",
 				"  [fd] Make Directory   - Create new directory",
 				"  [fp] Make Project     - Create project with optional git",
-				"  [fr] Files Rhodium    - Find files in ~/dev/rhodium",
+				"  [fh] Files Helium     - Find files in ~/personal/helium",
+				"  [fr] Files Rhodium    - Find files in ~/personal/rhodium",
 				"  [fR] Files Recent     - Recent files (frecency)",
 				"  [fa] Files All        - Find all files (includes hidden/ignored)",
 				"",
@@ -263,8 +265,6 @@ vim.api.nvim_create_autocmd("FileType", {
 				"  [za] Z Academic       - Navigate academic projects",
 				"  [zw] Z Professional   - Navigate professional/work projects",
 				"  [zp] Z Project        - Navigate personal projects",
-				"  [zs] Z Solenoid Labs  - Navigate Solenoid Labs projects",
-				"  [zv] Z Vault          - Navigate vaults",
 				"",
 				"Other:",
 				"  [hc] Health Check     - Run :checkhealth",
@@ -326,6 +326,17 @@ require("dashboard").setup({
 			{
 				action = function()
 					require("telescope.builtin").find_files({
+						prompt_title = "Helium",
+						cwd = dirs.helium,
+					})
+				end,
+				desc = " Files Helium",
+				icon = "⊹ ",
+				key = "fh",
+			},
+			{
+				action = function()
+					require("telescope.builtin").find_files({
 						prompt_title = "Rhodium",
 						cwd = dirs.rhodium,
 					})
@@ -381,22 +392,6 @@ require("dashboard").setup({
 				key = "zp",
 			},
 			{
-				action = function()
-					navigate_with_history(dirs.solenoidlabs, "Solenoid Labs")
-				end,
-				desc = " Z Solenoid Labs",
-				icon = "⊹ ",
-				key = "zs",
-			},
-			{
-				action = function()
-					navigate_with_history(dirs.vaults, "Vaults")
-				end,
-				desc = " Z Vault",
-				icon = "⊹ ",
-				key = "zv",
-			},
-			{
 				action = "checkhealth",
 				desc = " Health Check",
 				icon = "⊹ ",
@@ -410,7 +405,8 @@ require("dashboard").setup({
 						"  [fn] Quick Note       - Create timestamped note",
 						"  [fd] Make Directory   - Create new directory",
 						"  [fp] Make Project     - Create project with optional git",
-						"  [fr] Files Rhodium    - Find files in ~/dev/rhodium",
+						"  [fh] Files Helium     - Find files in ~/personal/helium",
+						"  [fr] Files Rhodium    - Find files in ~/personal/rhodium",
 						"  [fR] Files Recent     - Recent files (frecency)",
 						"  [fa] Files All        - Find all files (includes hidden/ignored)",
 						"",
@@ -418,8 +414,6 @@ require("dashboard").setup({
 						"  [za] Z Academic       - Navigate academic projects",
 						"  [zw] Z Professional   - Navigate professional/work projects",
 						"  [zp] Z Project        - Navigate personal projects",
-						"  [zs] Z Solenoid Labs  - Navigate Solenoid Labs projects",
-						"  [zv] Z Vault          - Navigate vaults",
 						"",
 						"Other:",
 						"  [hc] Health Check     - Run :checkhealth",

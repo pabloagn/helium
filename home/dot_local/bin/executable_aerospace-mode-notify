@@ -11,6 +11,9 @@ case "$current_mode" in
   service)
     message='Arrows join · R resets · F floats · Escape exits'
     ;;
+  workspace)
+    message='Letter summons here · number focuses · Option+Shift sends · Space picks'
+    ;;
   main)
     message='Navigation controls restored'
     ;;

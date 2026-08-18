@@ -33,6 +33,10 @@ focus-follows-mouse.enabled = false
 # Every workspace starts from the same neutral shape. Workspaces are not
 # specialised, so nothing is preconfigured per number; change any container
 # interactively with Option+Shift+Z or service mode.
+#
+# Only the nine numbers are persistent. Named workspaces (workspace mode,
+# Hyper+U) are created on demand and die when their last window closes, so
+# the pickers never fill with ghosts.
 persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 [exec]
@@ -53,18 +57,35 @@ outer.top = 12
 outer.right = 12
 
 # Workspace numbers, not applications, are tied to displays. This keeps
-# Hyper+<number> spatially predictable when docked. Every assignment ends in a
-# generic fallback, so the same config remains useful when undocked.
+# Hyper+<number> spatially predictable when docked: 1 on the built-in laptop
+# display (left), 2-8 on the MAG ultrawide (center), 9 on the Dell portrait
+# (right).
+#
+# Patterns are case-insensitive regex substrings, matched left to right; the
+# first pattern that names a connected display wins. Position numbers are
+# avoided on purpose because they renumber themselves whenever a display
+# disappears. `main` (the display holding the menu bar) is only the final
+# catch-all, and `secondary` is meaningless with three displays, so neither
+# leads any list.
+#
+# Fallbacks: 9 falls to the ultrawide when the Dell is unplugged, 2-8 fall
+# to the laptop when the ultrawide is gone, and everything collapses onto
+# whatever remains when undocked.
+#
+# An assigned workspace cannot be moved elsewhere: AeroSpace rejects both
+# summon-workspace and move-workspace-to-monitor for it (verified live).
+# The numbers are therefore fixed places; the portable, summonable
+# workspaces are the named ones in workspace mode.
 [workspace-to-monitor-force-assignment]
-'1' = ['built-in', 'main']
-'2' = ['built-in', 'main']
-'3' = ['MAG', 'main']
-'4' = ['MAG', 'main']
-'5' = ['MAG', 'main']
-'6' = ['DELL', 'secondary', 'main']
-'7' = ['DELL', 'secondary', 'main']
-'8' = ['DELL', 'secondary', 'main']
-'9' = ['main']
+'1' = ['built-in', 'MAG', 'main']
+'2' = ['MAG', 'built-in', 'main']
+'3' = ['MAG', 'built-in', 'main']
+'4' = ['MAG', 'built-in', 'main']
+'5' = ['MAG', 'built-in', 'main']
+'6' = ['MAG', 'built-in', 'main']
+'7' = ['MAG', 'built-in', 'main']
+'8' = ['MAG', 'built-in', 'main']
+'9' = ['DELL', 'MAG', 'built-in', 'main']
 
 [mode.main.binding]
 
@@ -118,8 +139,13 @@ alt-shift-7 = 'move-node-to-workspace 7'
 alt-shift-8 = 'move-node-to-workspace 8'
 alt-shift-9 = 'move-node-to-workspace 9'
 
-ctrl-alt-shift-cmd-leftSquareBracket = 'workspace --wrap-around prev'
-ctrl-alt-shift-cmd-rightSquareBracket = 'workspace --wrap-around next'
+# Cycle only through workspaces that hold windows on the focused display.
+# With unlimited named workspaces a blind next/prev walk stops scaling, so
+# the occupied list is piped back in through --stdin, the pattern the
+# AeroSpace docs recommend. The move-layer brackets below still walk every
+# workspace, so an empty one stays reachable as a send target.
+ctrl-alt-shift-cmd-leftSquareBracket = 'exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace --wrap-around --stdin prev'
+ctrl-alt-shift-cmd-rightSquareBracket = 'exec-and-forget aerospace list-workspaces --monitor focused --empty no | aerospace workspace --wrap-around --stdin next'
 alt-shift-leftSquareBracket = 'move-node-to-workspace --wrap-around prev'
 alt-shift-rightSquareBracket = 'move-node-to-workspace --wrap-around next'
 
@@ -149,9 +175,22 @@ ctrl-alt-shift-cmd-f = 'fullscreen'
 alt-shift-f = 'macos-native-fullscreen'
 ctrl-alt-shift-cmd-slash = 'layout horizontal vertical'
 
+# O for orientation: flip the whole workspace between side-by-side and
+# stacked in one press (--root acts on the workspace root). The nearest
+# Niri stacking habit -- Mod+Ctrl+A/S moving a window into the column below
+# or above -- is already Option+Shift+J/K here, which builds the vertical
+# container implicitly.
+alt-shift-o = 'layout --root horizontal vertical'
+
 # Niri puts its tabbed-display toggle on Mod+Z. Hyper+Z is the AtmosphericAI
 # browser here, so the accordion toggle keeps the key on the move layer.
 alt-shift-z = 'layout tiles accordion'
+
+# Group the focused window with the window below it under one vertical
+# parent. join-with is the docs' replacement for i3's split; the plain
+# `split` command is dead while flatten-containers normalization is on.
+# The other three directions stay in service mode.
+alt-shift-v = 'join-with down'
 
 # Niri: Mod+-/= sizes the column, Option+Shift+-/= sizes the window in it.
 ctrl-alt-shift-cmd-minus = 'resize width -80'
@@ -164,6 +203,9 @@ alt-shift-equal = 'resize height +80'
 ctrl-alt-shift-cmd-r = 'mode resize'
 alt-shift-r = 'balance-sizes'
 ctrl-alt-shift-cmd-semicolon = 'mode service'
+# Workspace mode: unlimited named workspaces on bare letters. See the
+# [mode.workspace.binding] block.
+ctrl-alt-shift-cmd-u = 'mode workspace'
 
 # Karabiner owns the physical Hyper+R and Hyper+; chords and invokes the mode
 # command through the CLI. Native bindings remain as a fallback if Karabiner is
@@ -179,9 +221,9 @@ f19 = 'mode service'
 # instance, while -n always spawns a new window. The apps still on plain -a
 # below are single-instance by design and refuse a second copy.
 # ---------------------------------------------------------------------------
-ctrl-alt-shift-cmd-space = 'exec-and-forget open -a Raycast'
 ctrl-alt-shift-cmd-enter = 'exec-and-forget open -na Ghostty.app'
-ctrl-alt-shift-cmd-w = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/aerospace-open-here com.mitchellh.ghostty open -na Ghostty.app'
+ctrl-alt-shift-cmd-w = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/aerospace-open-here h com.mitchellh.ghostty open -na Ghostty.app'
+alt-shift-w = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/aerospace-open-here v com.mitchellh.ghostty open -na Ghostty.app'
 
 ctrl-alt-shift-cmd-b = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/ff-personal'
 ctrl-alt-shift-cmd-z = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/ff-atmospheric'
@@ -217,6 +259,18 @@ ctrl-alt-shift-cmd-esc = 'exec-and-forget pmset displaysleepnow'
 ctrl-alt-shift-cmd-s = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/helium-screenshot screen'
 alt-shift-s = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/helium-screenshot region-clip'
 ctrl-alt-shift-cmd-y = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/helium-screenshot window'
+
+# ---------------------------------------------------------------------------
+# Finding things. Raycast owns its own launcher hotkeys (Hyper+A, Hyper+0),
+# so Space is free for search: Hyper focuses a window, the move layer
+# reaches the workspace alternate, matching the layer split everywhere
+# else. Option+Shift+Enter jumps to an empty workspace on the focused
+# display first, so a clean full-width slate is always one chord away. The
+# workspace picker also lives on Space inside workspace mode.
+# ---------------------------------------------------------------------------
+ctrl-alt-shift-cmd-space = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/aerospace-window-picker'
+alt-shift-space = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/aerospace-workspace-picker'
+alt-shift-enter = 'exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/aerospace-empty-workspace'
 
 # Both bare and Hyper-modified keys work. You can release Hyper after entering
 # the mode or keep holding it; Escape, Enter, or the entry chord exits.
@@ -271,6 +325,93 @@ ctrl-alt-shift-cmd-semicolon = 'mode main'
 m = ['move-node-to-monitor --focus-follows-window --wrap-around next', 'mode main']
 n = ['macos-native-fullscreen', 'mode main']
 backspace = ['close-all-windows-but-current', 'mode main']
+
+# Workspace mode (Hyper+U). Bare numbers focus the nine pinned workspaces,
+# exactly like Hyper+<number>, so the hand can leave Hyper once the mode is
+# open. Bare letters summon named workspaces: created on demand, pulled to
+# the focused display, gone when their last window closes -- Niri's model.
+# Option+Shift+<key> sends the focused window there without following it,
+# mirroring the main layer. Space opens the workspace picker. Escape,
+# Enter, or Hyper+U exits.
+[mode.workspace.binding]
+esc = 'mode main'
+enter = 'mode main'
+ctrl-alt-shift-cmd-u = 'mode main'
+space = ['exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/aerospace-workspace-picker', 'mode main']
+
+1 = ['workspace 1', 'mode main']
+2 = ['workspace 2', 'mode main']
+3 = ['workspace 3', 'mode main']
+4 = ['workspace 4', 'mode main']
+5 = ['workspace 5', 'mode main']
+6 = ['workspace 6', 'mode main']
+7 = ['workspace 7', 'mode main']
+8 = ['workspace 8', 'mode main']
+9 = ['workspace 9', 'mode main']
+
+a = ['summon-workspace a', 'mode main']
+b = ['summon-workspace b', 'mode main']
+c = ['summon-workspace c', 'mode main']
+d = ['summon-workspace d', 'mode main']
+e = ['summon-workspace e', 'mode main']
+f = ['summon-workspace f', 'mode main']
+g = ['summon-workspace g', 'mode main']
+h = ['summon-workspace h', 'mode main']
+i = ['summon-workspace i', 'mode main']
+j = ['summon-workspace j', 'mode main']
+k = ['summon-workspace k', 'mode main']
+l = ['summon-workspace l', 'mode main']
+m = ['summon-workspace m', 'mode main']
+n = ['summon-workspace n', 'mode main']
+o = ['summon-workspace o', 'mode main']
+p = ['summon-workspace p', 'mode main']
+q = ['summon-workspace q', 'mode main']
+r = ['summon-workspace r', 'mode main']
+s = ['summon-workspace s', 'mode main']
+t = ['summon-workspace t', 'mode main']
+u = ['summon-workspace u', 'mode main']
+v = ['summon-workspace v', 'mode main']
+w = ['summon-workspace w', 'mode main']
+x = ['summon-workspace x', 'mode main']
+y = ['summon-workspace y', 'mode main']
+z = ['summon-workspace z', 'mode main']
+
+alt-shift-1 = ['move-node-to-workspace 1', 'mode main']
+alt-shift-2 = ['move-node-to-workspace 2', 'mode main']
+alt-shift-3 = ['move-node-to-workspace 3', 'mode main']
+alt-shift-4 = ['move-node-to-workspace 4', 'mode main']
+alt-shift-5 = ['move-node-to-workspace 5', 'mode main']
+alt-shift-6 = ['move-node-to-workspace 6', 'mode main']
+alt-shift-7 = ['move-node-to-workspace 7', 'mode main']
+alt-shift-8 = ['move-node-to-workspace 8', 'mode main']
+alt-shift-9 = ['move-node-to-workspace 9', 'mode main']
+
+alt-shift-a = ['move-node-to-workspace a', 'mode main']
+alt-shift-b = ['move-node-to-workspace b', 'mode main']
+alt-shift-c = ['move-node-to-workspace c', 'mode main']
+alt-shift-d = ['move-node-to-workspace d', 'mode main']
+alt-shift-e = ['move-node-to-workspace e', 'mode main']
+alt-shift-f = ['move-node-to-workspace f', 'mode main']
+alt-shift-g = ['move-node-to-workspace g', 'mode main']
+alt-shift-h = ['move-node-to-workspace h', 'mode main']
+alt-shift-i = ['move-node-to-workspace i', 'mode main']
+alt-shift-j = ['move-node-to-workspace j', 'mode main']
+alt-shift-k = ['move-node-to-workspace k', 'mode main']
+alt-shift-l = ['move-node-to-workspace l', 'mode main']
+alt-shift-m = ['move-node-to-workspace m', 'mode main']
+alt-shift-n = ['move-node-to-workspace n', 'mode main']
+alt-shift-o = ['move-node-to-workspace o', 'mode main']
+alt-shift-p = ['move-node-to-workspace p', 'mode main']
+alt-shift-q = ['move-node-to-workspace q', 'mode main']
+alt-shift-r = ['move-node-to-workspace r', 'mode main']
+alt-shift-s = ['move-node-to-workspace s', 'mode main']
+alt-shift-t = ['move-node-to-workspace t', 'mode main']
+alt-shift-u = ['move-node-to-workspace u', 'mode main']
+alt-shift-v = ['move-node-to-workspace v', 'mode main']
+alt-shift-w = ['move-node-to-workspace w', 'mode main']
+alt-shift-x = ['move-node-to-workspace x', 'mode main']
+alt-shift-y = ['move-node-to-workspace y', 'mode main']
+alt-shift-z = ['move-node-to-workspace z', 'mode main']
 
 # No application is pinned to a workspace. Every window opens on whatever
 # workspace is focused when it appears, and stays there until it is moved

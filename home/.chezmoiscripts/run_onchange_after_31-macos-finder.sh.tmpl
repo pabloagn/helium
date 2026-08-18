@@ -1,0 +1,72 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+
+# Finder ships with almost every useful option turned off. These are the ones
+# that matter for day-to-day work with paths and dotfiles.
+#
+# FXPreferredViewStyle is deliberately absent. This Mac is set to column view
+# ("clmv") already, and that is a taste decision, not a defect.
+
+# --- Paths ---
+# The path bar is the strip at the bottom that shows the folder chain. Each
+# part of it is a real drop target, so it doubles as a way to move a file up
+# several levels in one drag.
+defaults write com.apple.finder ShowPathbar -bool true
+
+# The status bar shows the item count and the free space on the disk.
+defaults write com.apple.finder ShowStatusBar -bool true
+
+# Full POSIX path in the window title. Apple never documented this key, and
+# reports differ on whether Tahoe still reads it. It is harmless either way:
+# an unread key changes nothing. ShowPathbar above is the reliable one.
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+
+# --- Files Finder normally hides ---
+# Dotfiles are visible from the start. Cmd-Shift-. still toggles them, so this
+# only changes which way the toggle starts.
+defaults write com.apple.finder AppleShowAllFiles -bool true
+
+# Show every file extension, including the ones Finder hides by default.
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+
+# Stop the "Are you sure you want to change the extension?" sheet. It fires on
+# every rename that touches the suffix, which is most renames here.
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
+
+# --- Sorting and search ---
+# Folders sort above files, the way every file manager outside macOS does it.
+defaults write com.apple.finder _FXSortFoldersFirst -bool true
+defaults write com.apple.finder _FXSortFoldersFirstOnDesktop -bool true
+
+# Search the current folder instead of the whole Mac. "SCcf" is the current
+# folder; the stock value "SCev" is This Mac.
+defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+
+# --- Windows and behaviour ---
+# A new Finder window opens at the home folder rather than Recents.
+defaults write com.apple.finder NewWindowTarget -string "PfHm"
+
+# Add Quit to the Finder menu, so Cmd-Q closes it like any other app.
+defaults write com.apple.finder QuitMenuItem -bool true
+
+# Spring-loading opens a folder when a drag hovers over it. On by default, but
+# with a delay. A delay of 0 makes drag-and-drop into deep trees usable.
+defaults write NSGlobalDomain com.apple.springing.enabled -bool true
+defaults write NSGlobalDomain com.apple.springing.delay -float 0
+
+# Save dialogs default to the disk, not iCloud Drive.
+defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
+
+# --- Stop .DS_Store spreading ---
+# Finder writes a .DS_Store file into every folder it displays. On a network
+# share or a USB stick those files end up committed, or handed to someone else.
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+
+# Finder reads most of these only at launch, so it has to restart. This closes
+# any open Finder windows. It does not touch the Desktop or running apps.
+killall Finder 2>/dev/null || true
+
+echo "Finder defaults written and Finder restarted."
+{{- end }}

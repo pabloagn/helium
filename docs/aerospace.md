@@ -6,22 +6,27 @@ directional navigation, a consistent move layer, and minimal pointer use.
 
 ## Workspace model
 
-Nine persistent numeric workspaces. **No application is pinned to a workspace.**
-Every window opens on whatever workspace is focused when it appears and stays
-there until it is moved deliberately.
+Nine persistent numeric workspaces plus unlimited named ones. **No application
+is pinned to a workspace.** Every window opens on whatever workspace is focused
+when it appears and stays there until it is moved deliberately.
 
-Workspace *numbers* are still tied to displays, so `Hyper 1..9` stays spatially
-predictable when docked:
+The numbers are *places*. Each is pinned to a display, so `Hyper 1..9` stays
+spatially predictable when docked, and keyboard order matches desk order:
 
 | Workspaces | Preferred display |
 | --- | --- |
-| `1`, `2` | Built-in |
-| `3`, `4`, `5` | MAG ultrawide |
-| `6`, `7`, `8` | Dell portrait |
-| `9` | Main display |
+| `1` | Built-in laptop (left) |
+| `2..8` | MAG ultrawide (center) |
+| `9` | Dell portrait (right); falls back to the ultrawide |
 
 The display names are case-insensitive patterns with fallbacks. On the laptop
-alone, every workspace falls back to the main display.
+alone, every workspace falls back to the built-in display.
+
+Named workspaces are *projects*. Workspace mode (`Hyper U`) creates them on
+demand on bare letters, **summons them to whichever display is focused**, and
+they die when their last window closes — Niri's model. AeroSpace refuses to
+summon a pinned workspace (verified live), which is why the numbers and the
+letters divide the work this way: numbers stay put, letters come to you.
 
 ## Modifier model
 
@@ -56,10 +61,14 @@ from one workspace stays put.
 | `Option+Shift` + arrows / `HJKL` | Move the focused window |
 | `Hyper 1..9` | Focus workspace; press again to go back |
 | `Option+Shift 1..9` | Send window to workspace without following it |
-| `Hyper [` / `Hyper ]` | Previous / next workspace |
+| `Hyper [` / `Hyper ]` | Previous / next *occupied* workspace on the focused display |
 | `Option+Shift [` / `]` | Send window to previous / next workspace |
 | `Hyper Tab` | Previous workspace |
 | `Option+Shift Tab` | Previously focused window |
+| `Hyper U` | Workspace mode: named workspaces, summon, picker |
+| `Hyper Space` | Window picker: choose any window on any display |
+| `Option+Shift Space` | Workspace picker: every occupied workspace |
+| `Option+Shift Enter` | Jump to an empty workspace, focused display first |
 | `Hyper ,` / `Hyper .` | Focus previous / next display |
 | `Option+Shift ,` / `.` | Send window to previous / next display and follow |
 | `Hyper C` | Close window |
@@ -68,6 +77,8 @@ from one workspace stays put.
 | `Option+Shift F` | Native macOS fullscreen |
 | `Hyper V` | Toggle floating / tiling |
 | `Option+Shift Z` | Toggle tiles / accordion |
+| `Option+Shift V` | Join with the window below under one vertical parent |
+| `Option+Shift O` | Flip the whole workspace between side-by-side and stacked |
 | `Hyper /` | Toggle horizontal / vertical orientation |
 | `Hyper -` / `Hyper =` | Resize width |
 | `Option+Shift -` / `=` | Resize height |
@@ -83,9 +94,9 @@ same job.
 
 | Shortcut | Opens |
 | --- | --- |
-| `Hyper Space` | Raycast |
-| `Hyper Enter` / `Hyper W` | Ghostty |
-| `Option+Shift W` | New Ghostty beside the focused window, balanced 50/50 |
+| `Hyper Enter` | Ghostty |
+| `Hyper W` | New Ghostty beside the focused window, balanced 50/50 |
+| `Option+Shift W` | New Ghostty below the focused window, balanced 50/50 |
 | `Hyper B` | **Firefox — Personal profile** |
 | `Hyper Z` | **Firefox — AtmosphericAI profile** |
 | `Option+Shift B` | Safari |
@@ -137,6 +148,19 @@ Helium does not manage:
 **Raycast → Settings → Extensions → Script Commands → Add Script Directory →
 `~/.local/share/raycast-scripts`**
 
+Every script command shares one icon: the SF Symbols `command` glyph (⌘),
+rendered once to `icons/helium.png` (light) and `icons/helium-dark.png`
+(dark). SF Symbols is Apple's own icon set, so the mark matches the system
+style exactly, and one shared icon makes the custom entries instantly
+recognizable in the Raycast list.
+
+## Shortcut cheatsheet
+
+`~/.local/share/helium/cheatsheet.md` lists every binding on one page. The
+Raycast command **Helium | Shortcuts Cheatsheet** opens it read-only in Neovim
+inside a new Ghostty window. The file is Chezmoi-managed; edit it in the repo
+at `home/dot_local/share/helium/cheatsheet.md`.
+
 ## Resize and service modes
 
 Mode changes display a macOS notification, so there is always visible feedback.
@@ -165,7 +189,21 @@ In service mode (`Hyper ;`):
 | `N` | Toggle native macOS fullscreen |
 | Backspace | Close every other window on the workspace |
 
-Both mode-entry chords are plain AeroSpace bindings.
+In workspace mode (`Hyper U`):
+
+| Key | Action |
+| --- | --- |
+| `1..9` | Focus that pinned workspace, then exit the mode |
+| `A..Z` | Summon the named workspace to the focused display, creating it on demand |
+| `Option+Shift` + `1..9` / `A..Z` | Send the focused window there without following it |
+| `Space` | Workspace picker: every occupied workspace on every display |
+| Escape / Enter / `Hyper U` | Exit the mode |
+
+Every key exits the mode after acting, so the flow is always leader, key, done.
+Named workspaces die when their last window closes, so the picker never fills
+with ghosts.
+
+All mode-entry chords are plain AeroSpace bindings.
 
 ## Karabiner rules
 
@@ -187,10 +225,11 @@ erase it. Keeping it in the source survives.
 AeroSpace cannot keep an empty half of a tiled workspace. A single tiled window
 therefore occupies the entire root, and resize has no sibling boundary to move.
 
-To pair the focused window with a terminal, press `Option+Shift W`. Helium
-atomically:
+To pair the focused window with a terminal, press `Hyper W` for a terminal
+beside it or `Option+Shift W` for a terminal below it. Helium atomically:
 
-1. Converts the focused window and workspace root to horizontal tiles.
+1. Converts the focused window and workspace root to tiles in the requested
+   orientation (`h` beside, `v` below).
 2. Opens a new Ghostty process.
 3. Moves the new window back to the current workspace.
 4. Balances the two tiled windows to 50/50 and focuses Ghostty.

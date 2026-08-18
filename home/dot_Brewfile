@@ -139,6 +139,27 @@ cask "neovide-app"
 # self-updates, so `brew upgrade` is a no-op unless called with --greedy.
 cask "craft"
 
+# Terminal emulators. All four are official homebrew-cask entries.
+# Ghostty is the incumbent: ~/.config/ghostty in this repo configures it, so
+# without this line a fresh machine gets the config and no app.
+cask "ghostty"
+# The three below are installed alongside it for comparison.
+# kitty: GPU-drawn, configured by a plain text file, no tabs-in-window chrome.
+cask "kitty"
+# Tabby: Electron, and the only one of the three with a built-in SSH and serial
+# client, so it is the one to keep if a serial console is ever needed.
+cask "tabby"
+# Wave: Electron. Puts file previews, graphs and AI blocks inside the terminal
+# grid itself rather than in a side pane. Self-updates, so `brew upgrade` is a
+# no-op for it unless called with --greedy.
+cask "wave"
+
+# Proton Mail: the desktop client, which wraps the same web app the
+# `proton-mail` Raycast script opens in the Personal Firefox profile. It brings
+# offline access and native notifications. Self-updates, so `brew upgrade` is a
+# no-op for it unless called with --greedy.
+cask "proton-mail"
+
 # Third-party tap, reviewed per the policy in README.md. Orca is an Agent
 # Development Environment: it runs Claude Code, Codex and 30+ other CLI agents
 # side by side, each in its own git worktree, and drives them with your existing

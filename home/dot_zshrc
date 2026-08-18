@@ -37,20 +37,141 @@ zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "$HOME/.cache/zsh/compcache"
 zstyle ':completion:*:descriptions' format '%F{blue}%d%f'
 
-bindkey -e
+# --- Vi mode ---------------------------------------------------------------
+# `bindkey -v` selects the `viins` keymap and links it to `main`, so each new
+# line starts in insert mode. Escape switches to `vicmd`, which is vi normal
+# mode. This has to stay above the fzf and atuin init lines further down: both
+# tools bind their widgets into `viins` and `vicmd` only when vi mode is
+# already active.
+bindkey -v
+
+# KEYTIMEOUT is in hundredths of a second and defaults to 40. That is the 0.4
+# second wait after Escape before normal mode engages. 1 removes the wait.
+# Multi-key bindings survive it because a terminal sends an escape sequence as
+# a single burst, not as separately timed keystrokes.
+KEYTIMEOUT=1
 
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
-bindkey "^[[A" up-line-or-beginning-search
-bindkey "^[[B" down-line-or-beginning-search
-bindkey "^P" up-line-or-beginning-search
-bindkey "^N" down-line-or-beginning-search
-bindkey '^[[1;3D' backward-word
-bindkey '^[[1;3C' forward-word
-bindkey '^[[H' beginning-of-line
-bindkey '^[[F' end-of-line
-bindkey '^[^?' backward-kill-word
+
+# Bound in both keymaps on purpose. A bare `bindkey` writes to `main`, which is
+# now `viins`, so normal mode would otherwise lose the arrow keys, Home, End
+# and the prefix history search.
+for _keymap in viins vicmd; do
+  bindkey -M $_keymap "^[[A" up-line-or-beginning-search
+  bindkey -M $_keymap "^[[B" down-line-or-beginning-search
+  bindkey -M $_keymap "^P"   up-line-or-beginning-search
+  bindkey -M $_keymap "^N"   down-line-or-beginning-search
+  bindkey -M $_keymap '^[[1;3D' backward-word
+  bindkey -M $_keymap '^[[1;3C' forward-word
+  bindkey -M $_keymap '^[[H' beginning-of-line
+  bindkey -M $_keymap '^[[F' end-of-line
+done
+
+# Hybrid layout: vi normal mode for editing a whole line, the familiar control
+# keys for small fixes without leaving insert. `viins` maps ^A, ^E and ^K to
+# self-insert, so without these they would type a literal control character.
+bindkey -M viins '^A' beginning-of-line
+bindkey -M viins '^E' end-of-line
+bindkey -M viins '^K' kill-line
+bindkey -M viins '^U' kill-whole-line
+bindkey -M viins '^W' backward-kill-word
+bindkey -M viins '^[^?' backward-kill-word
+# `viins` maps Backspace to vi-backward-delete-char, which refuses to delete
+# past the column where insert mode began. backward-delete-char has no such
+# limit, and it is what the emacs keymap used before.
+bindkey -M viins '^?' backward-delete-char
+bindkey -M viins '^H' backward-delete-char
+
+# k and j search history by the prefix already typed, matching the arrow keys.
+bindkey -M vicmd 'k' up-line-or-beginning-search
+bindkey -M vicmd 'j' down-line-or-beginning-search
+
+# --- System clipboard ---
+# zsh's vi mode yanks into CUTBUFFER, which never leaves the shell. So `yy`
+# here followed by Cmd-V in another app pastes whatever was on the clipboard
+# before, and copying in a browser then pressing `p` here pastes the shell's
+# own stale buffer. These wrappers bridge the two.
+#
+# Each wrapper calls the built-in widget through `zle .name`, then pushes the
+# resulting CUTBUFFER to pbcopy. vi-delete-char (x) is left alone on purpose:
+# it fires once per keypress, and holding x would fork pbcopy dozens of times.
+_helium_clip_out() { print -rn -- "$CUTBUFFER" | pbcopy }
+for _widget in vi-yank vi-yank-eol vi-yank-whole-line \
+               vi-delete vi-change vi-change-eol vi-change-whole-line \
+               vi-kill-line vi-kill-eol vi-backward-kill-word; do
+  eval "_helium_clip_${_widget}() { zle .${_widget} \"\$@\"; _helium_clip_out }"
+  zle -N "$_widget" "_helium_clip_${_widget}"
+done
+unset _widget
+
+# p and P read the system clipboard instead of CUTBUFFER. The $(...) strips the
+# trailing newline, which is what you want when pasting a command: without it a
+# copied line would submit itself the moment it landed.
+_helium_clip_vi-put-after()  { CUTBUFFER="$(pbpaste)"; zle .vi-put-after }
+_helium_clip_vi-put-before() { CUTBUFFER="$(pbpaste)"; zle .vi-put-before }
+zle -N vi-put-after  _helium_clip_vi-put-after
+zle -N vi-put-before _helium_clip_vi-put-before
+
+# Ctrl-x Ctrl-e opens the current line in $EDITOR and runs whatever is saved.
+# vicmd `v` is left alone because zsh uses it to enter visual mode.
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey -M viins '^X^E' edit-command-line
+bindkey -M vicmd '^X^E' edit-command-line
+
+# Text objects, so ci" ca( di{ and friends work. These widgets ship with zsh in
+# its own functions directory. `visual` is the keymap `v` enters; `viopp` is the
+# one a pending operator such as c or d switches to.
+autoload -Uz select-quoted select-bracketed
+zle -N select-quoted
+zle -N select-bracketed
+for _keymap in visual viopp; do
+  for _char in {a,i}${(s..)^:-\'\"\`}; do
+    bindkey -M $_keymap $_char select-quoted
+  done
+  for _char in {a,i}${(s..)^:-'()[]{}<>bB'}; do
+    bindkey -M $_keymap $_char select-bracketed
+  done
+done
+unset _keymap _char
+
+# vim-surround, also shipped with zsh: cs"' and ds" and ysiw" in normal mode,
+# S in visual mode. One function backs all three widgets; it reads $WIDGET to
+# decide which operation to run.
+autoload -Uz surround
+zle -N delete-surround surround
+zle -N change-surround surround
+zle -N add-surround surround
+bindkey -M vicmd 'cs' change-surround
+bindkey -M vicmd 'ds' delete-surround
+bindkey -M vicmd 'ys' add-surround
+bindkey -M visual 'S' add-surround
+
+# The cursor shows the mode. `\e[N q` is the DECSCUSR escape: 2 is a steady
+# block, 4 is a steady underline, 6 is a steady bar. Insert mode used 6, which
+# renders as a one-pixel sliver and is hard to find on a dark background. The
+# underline is the full width of the cell, so it stays visible while still
+# being unmistakably not the block that normal mode uses.
+# Ghostty sets `shell-integration-features = no-cursor`, so the terminal leaves
+# these alone instead of resetting the shape at every prompt.
+_helium_cursor_for_keymap() {
+  case "$1" in
+    vicmd|visual|viopp) print -n '\e[2 q' ;;
+    *)                  print -n '\e[4 q' ;;
+  esac
+}
+zle-keymap-select() { _helium_cursor_for_keymap "$KEYMAP" }
+zle-line-init()     { _helium_cursor_for_keymap "$KEYMAP" }
+zle -N zle-keymap-select
+zle -N zle-line-init
+# A running command should not inherit the thin insert-mode bar. `starship init
+# zsh` below detects the zle-keymap-select above and wraps it, so the prompt
+# indicator and the cursor shape both keep working.
+_helium_cursor_block() { print -n '\e[2 q' }
+autoload -Uz add-zsh-hook
+add-zsh-hook preexec _helium_cursor_block
 
 source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
@@ -80,3 +201,8 @@ source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # Silence direnv
 export DIRENV_LOG_FORMAT=""
+
+# Silence Homebrew's "Adjust how often this is run..." and "Hide these hints"
+# banners. They print on every `brew` invocation, including the one that
+# `just apply` runs through the chezmoi bundle script.
+export HOMEBREW_NO_ENV_HINTS=1

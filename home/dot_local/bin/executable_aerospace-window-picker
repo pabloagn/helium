@@ -1,0 +1,30 @@
+#!/bin/sh
+set -eu
+
+aerospace_bin=/opt/homebrew/bin/aerospace
+
+# The AppleScript lives in a shell variable because /bin/sh (bash 3.2) cannot
+# parse a here-document inside command substitution. A native list dialog
+# keeps the picker dependency-free and usable from exec-and-forget. Typing
+# jumps to the first match; Escape cancels.
+picker_script='
+on run argv
+  set text item delimiters to linefeed
+  set opts to text items of (item 1 of argv)
+  set pick to choose from list opts with title "AeroSpace" with prompt (item 2 of argv)
+  if pick is false then return ""
+  return item 1 of pick
+end run
+'
+
+# One line per window on every display, sorted by application. The window id
+# rides at the end behind a sentinel character, so titles that contain spaces
+# or dashes still parse cleanly.
+windows=$($aerospace_bin list-windows --all --format '%{app-name} — %{window-title} ⌁ %{window-id}' | /usr/bin/sort -f)
+[ -n "$windows" ] || exit 0
+
+choice=$(/usr/bin/osascript -e "$picker_script" "$windows" "Focus window:")
+[ -n "$choice" ] || exit 0
+
+window_id=${choice##*⌁ }
+exec $aerospace_bin focus --window-id "$window_id"

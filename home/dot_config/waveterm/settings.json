@@ -1,0 +1,17 @@
+{
+  "autoupdate:channel": "latest",
+
+  "term:fontfamily": "Berkeley Mono Rh",
+  "term:fontsize": 14,
+  "term:theme": "kanso-zen",
+  "term:copyonselect": true,
+  "term:cursorblink": false,
+  "term:scrollback": 100000,
+  "term:macoptionismeta": true,
+  "term:transparency": 0.03,
+
+  "window:blur": true,
+  "window:opacity": 0.97,
+  "window:nativetitlebar": false,
+  "window:savelastwindow": true
+}

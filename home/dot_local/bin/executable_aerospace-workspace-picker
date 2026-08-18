@@ -1,0 +1,30 @@
+#!/bin/sh
+set -eu
+
+aerospace_bin=/opt/homebrew/bin/aerospace
+
+# The AppleScript lives in a shell variable because /bin/sh (bash 3.2) cannot
+# parse a here-document inside command substitution.
+picker_script='
+on run argv
+  set text item delimiters to linefeed
+  set opts to text items of (item 1 of argv)
+  set pick to choose from list opts with title "AeroSpace" with prompt (item 2 of argv)
+  if pick is false then return ""
+  return item 1 of pick
+end run
+'
+
+# Every occupied workspace on every display, annotated with its display.
+workspaces=$($aerospace_bin list-workspaces --monitor all --empty no --format '%{workspace} ⌁ %{monitor-name}')
+[ -n "$workspaces" ] || exit 0
+
+choice=$(/usr/bin/osascript -e "$picker_script" "$workspaces" "Go to workspace:")
+[ -n "$choice" ] || exit 0
+
+workspace=${choice%% ⌁*}
+
+# Named workspaces are unpinned, so summon pulls them to the focused display.
+# The pinned numbers refuse to be summoned; focus them where they live.
+$aerospace_bin summon-workspace -- "$workspace" 2>/dev/null \
+  || exec $aerospace_bin workspace -- "$workspace"

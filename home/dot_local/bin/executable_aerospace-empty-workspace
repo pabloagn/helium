@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+
+aerospace_bin=/opt/homebrew/bin/aerospace
+
+# Prefer an empty workspace pinned to the focused display; fall back to any
+# empty workspace anywhere. Named workspaces die when empty, so only the nine
+# persistent numbers can ever appear here.
+target=$($aerospace_bin list-workspaces --monitor focused --empty | /usr/bin/head -n 1)
+if [ -z "$target" ]; then
+  target=$($aerospace_bin list-workspaces --monitor all --empty | /usr/bin/head -n 1)
+fi
+[ -n "$target" ] || exit 0
+
+exec $aerospace_bin workspace -- "$target"
