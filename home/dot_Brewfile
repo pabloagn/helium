@@ -110,7 +110,6 @@ brew "qalculate-qt"
 # Existing Homebrew-managed applications
 cask "codex"
 cask "claude-code"
-cask "font-jetbrains-mono-nerd-font"
 # Conductor: runs Claude Code sessions in parallel, each in its own git
 # worktree, with a diff-first review UI. Works alongside VS Code rather than
 # replacing it.
@@ -186,3 +185,158 @@ tap "stablyai/orca"
 # no_quarantine flag would have helped. The real Orca is properly signed.
 cask "stablyai/orca/orca"
 
+
+# ---------------------------------------------------------------------------
+# Desktop / menu bar
+#
+# SketchyBar: the macOS analogue of Rhodium's Waybar. A fully scriptable status
+# bar replacement -- centered clock, custom font, and shell-driven modules
+# (CPU, memory, network, thermals, battery, layout). This is the base for a
+# gradual port of the Rhodium bar; no config ships yet.
+#
+# Tap review: FelixKratz/homebrew-formulae ships sketchybar.rb, which builds
+# from the pinned v2.24.0 source tag on github.com/FelixKratz/SketchyBar with a
+# matching url, GPL-3.0-only. No prebuilt binary is pulled -- Homebrew compiles
+# it and fetches only the documentation tarball from felixkratz.github.io. The
+# formula declares a `service` block, so the bar runs via
+# `brew services start sketchybar` once a config exists.
+#
+# Actively maintained: v2.24.0 released 2026-06-04, commits through June 2026.
+# Runs on macOS 26 Tahoe. The one Tahoe regression (mirroring native menu-bar
+# icons) was fixed in v2.24.0 and does not affect self-scripted modules.
+#
+# Homebrew 6 refuses to load a formula from an untrusted tap, so
+# run_onchange_after_10-homebrew-bundle trusts this one formula (not the whole
+# tap) before `brew bundle` runs. The trust lives in trust.json.
+tap "FelixKratz/formulae"
+brew "sketchybar"
+
+
+# ---------------------------------------------------------------------------
+# Fonts
+#
+# A direct port of Rhodium's home/assets/fonts/fonts.nix. Same families, same
+# categories, same Nerd Font companions. Font casks live in homebrew/cask now,
+# so no homebrew/cask-fonts tap line is needed.
+#
+# Nix package names and Homebrew cask names diverge in a few places, so the
+# mapping is annotated where it is not one-to-one.
+#
+# Rhodium entries with no Homebrew cask stay manual downloads:
+#
+#   Paid or private - Berkeley Mono (built from the private iridium-rh flake and
+#   already installed here as "Berkeley Mono Rh"), Cartograph Mono CF, Dank Mono,
+#   MonoLisa, Operator Mono, PragmataPro, Avenir, Futura, Helvetica Neue,
+#   Proxima Nova, Adobe Caslon Pro, Minion Pro, Sabon.
+#
+#   Free but unpackaged - Garamond Libre, Symbola, Quivira.
+#
+#   Cask exists but upstream download is dead, so `brew bundle` cannot fetch
+#   them - Office Code Pro (the nathco/Office-Code-Pro GitHub repo was deleted,
+#   so the cask 404s for everyone) and PT Mono (api.paratype.com now returns
+#   401 for every Paratype cask, PT Sans included). One failed cask aborts the
+#   whole `brew bundle` run, which also blocks `just apply`, so both are left
+#   out rather than commented in.
+# ---------------------------------------------------------------------------
+
+# Monospace
+cask "font-maple-mono"
+cask "font-anonymous-pro"
+cask "font-anonymice-nerd-font"          # Nerd Font build of Anonymous Pro
+cask "font-cascadia-code"
+cask "font-caskaydia-cove-nerd-font"     # Nerd Font build of Cascadia Code
+cask "font-dejavu"                       # includes DejaVu Sans Mono
+cask "font-dejavu-sans-mono-nerd-font"
+cask "font-fantasque-sans-mono"
+cask "font-fantasque-sans-mono-nerd-font"
+cask "font-fira-code"
+cask "font-fira-code-nerd-font"
+cask "font-fira-mono"
+cask "font-fira-mono-nerd-font"
+cask "font-hack"
+cask "font-hack-nerd-font"
+cask "font-ibm-plex-mono"
+cask "font-blex-mono-nerd-font"          # Nerd Font build of IBM Plex Mono
+cask "font-inconsolata"
+cask "font-inconsolata-nerd-font"
+cask "font-jetbrains-mono"
+cask "font-jetbrains-mono-nerd-font"
+cask "font-juliamono"
+cask "font-roboto-mono"
+cask "font-roboto-mono-nerd-font"
+cask "font-source-code-pro"
+cask "font-ubuntu-mono"                  # the classic Ubuntu Mono, as in Rhodium
+cask "font-victor-mono"
+cask "font-victor-mono-nerd-font"
+
+# Monospace Pro
+cask "font-commit-mono"
+cask "font-commit-mono-nerd-font"
+cask "font-geist-mono"
+cask "font-geist-mono-nerd-font"
+cask "font-input"                        # Input family, incl. Input Mono
+cask "font-iosevka"
+cask "font-iosevka-nerd-font"
+cask "font-iosevka-term-nerd-font"
+cask "font-iosevka-term-slab-nerd-font"
+cask "font-zed-mono-nerd-font"           # Zed's Iosevka derivative
+cask "font-monaspace"
+cask "font-monaspace-nf"                 # Nerd Font build of Monaspace
+cask "font-recursive"
+cask "font-recursive-mono-nerd-font"
+cask "font-server-mono"
+cask "font-sf-mono"                      # Apple licence; the cask pulls it from Apple
+
+# Sans-serif
+cask "font-atkinson-hyperlegible"
+cask "font-cabin"
+cask "font-dosis"
+cask "font-fira-sans"
+cask "font-inter"
+cask "font-lato"
+cask "font-liberation"
+cask "font-liberation-nerd-font"
+cask "font-montserrat"
+cask "font-noto-sans"
+cask "font-noto-sans-cjk"
+cask "font-noto-color-emoji"
+cask "font-nunito"
+cask "font-open-sans"
+cask "font-overpass"
+cask "font-poppins"
+cask "font-quicksand"
+cask "font-raleway"
+cask "font-roboto"
+cask "font-source-sans-3"                # Source Sans Pro was renamed upstream
+cask "font-ubuntu"
+cask "font-work-sans"
+
+# Serif
+cask "font-alegreya"
+cask "font-cardo"
+cask "font-cormorant-garamond"
+cask "font-crimson-text"                 # the original Crimson
+cask "font-eb-garamond"
+cask "font-gelasio"
+cask "font-latin-modern"
+cask "font-libre-baskerville"
+cask "font-lora"
+cask "font-merriweather"
+cask "font-playfair-display"
+cask "font-source-serif-4"               # Source Serif Pro was renamed upstream
+cask "font-vollkorn"
+
+# Display
+cask "font-amatic-sc"
+cask "font-anton"
+cask "font-bangers"
+cask "font-bebas-neue"
+cask "font-comfortaa"
+cask "font-dancing-script"
+cask "font-fredoka"                      # Fredoka One was folded into Fredoka
+cask "font-oswald"
+cask "font-pacifico"
+cask "font-righteous"
+
+# Symbol and fallback coverage
+cask "font-gnu-unifont"

@@ -9,5 +9,14 @@ if ! command -v brew >/dev/null 2>&1; then
     exit 1
 fi
 
+# SketchyBar ships in the third-party tap FelixKratz/formulae. Homebrew 6
+# refuses to load a formula from an untrusted tap until it is trusted (casks,
+# such as orca, are trusted separately in trust.json). Trust the single formula
+# rather than the whole tap, and only when it is not already trusted, so the
+# step stays idempotent under `set -eu`.
+if ! brew trust --json v1 | grep -q 'felixkratz/formulae/sketchybar'; then
+    brew trust --formula felixkratz/formulae/sketchybar
+fi
+
 brew bundle --global
 {{- end }}
