@@ -129,6 +129,15 @@ cask "amie"
 # PDF Expert: full PDF reader and editor. Handles large and complex files that
 # Preview struggles with, plus text editing, form filling and annotation.
 cask "pdf-expert"
+# Neovide: native GUI front end for Neovim, driven by the same config as the
+# terminal one. Adds smooth scrolling, animated window transitions, font
+# ligatures and the animated cursor trail (its "cursor particles" setting).
+# Named neovide-app, not neovide: homebrew-cask renamed it, and the old name is
+# a stub that emits a rename warning on every `brew bundle`.
+cask "neovide-app"
+# Craft: native document editor. Official homebrew-cask formula, and the app
+# self-updates, so `brew upgrade` is a no-op unless called with --greedy.
+cask "craft"
 
 # Third-party tap, reviewed per the policy in README.md. Orca is an Agent
 # Development Environment: it runs Claude Code, Codex and 30+ other CLI agents
