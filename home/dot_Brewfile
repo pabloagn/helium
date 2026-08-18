@@ -139,6 +139,14 @@ cask "neovide-app"
 # self-updates, so `brew upgrade` is a no-op unless called with --greedy.
 cask "craft"
 
+# Consumer applications: VPN, media, and messaging.
+cask "protonvpn"
+cask "vlc"
+cask "discord"
+cask "telegram"
+cask "signal"
+cask "brave-browser"
+
 # Terminal emulators. All four are official homebrew-cask entries.
 # Ghostty is the incumbent: ~/.config/ghostty in this repo configures it, so
 # without this line a fresh machine gets the config and no app.

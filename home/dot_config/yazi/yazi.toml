@@ -103,53 +103,58 @@ enabled = false
 # Terminal editors block Yazi while they run; GUI editors are orphaned so Yazi
 # stays usable. None of the GUI editors ship a CLI on PATH here, so each goes
 # through `open -a`.
+#
+# %s is the file-list placeholder and %s1 is the first file. These are the
+# Yazi 26 forms. The old shell forms "$@" and "$1" stopped being substituted in
+# Yazi 26.8: every opener still ran, but with no file arguments, which is how
+# Enter on a file started opening a bare $EDITOR at the dashboard.
 edit = [
-  { run = '${EDITOR:-nvim} "$@"', desc = "$EDITOR", block = true, for = "unix" },
+  { run = '${EDITOR:-nvim} %s', desc = "$EDITOR", block = true, for = "unix" },
 ]
 edit-helix = [
-  { run = 'hx "$@"', desc = "Helix", block = true, for = "unix" },
+  { run = 'hx %s', desc = "Helix", block = true, for = "unix" },
 ]
 edit-vim = [
-  { run = 'vim "$@"', desc = "Vim", block = true, for = "unix" },
+  { run = 'vim %s', desc = "Vim", block = true, for = "unix" },
 ]
 edit-nano = [
-  { run = 'nano "$@"', desc = "Nano", block = true, for = "unix" },
+  { run = 'nano %s', desc = "Nano", block = true, for = "unix" },
 ]
 edit-zed = [
-  { run = 'open -a Zed "$@"', desc = "Zed", orphan = true, for = "macos" },
+  { run = 'open -a Zed %s', desc = "Zed", orphan = true, for = "macos" },
 ]
 edit-code = [
-  { run = 'open -a "Visual Studio Code" "$@"', desc = "VS Code", orphan = true, for = "macos" },
+  { run = 'open -a "Visual Studio Code" %s', desc = "VS Code", orphan = true, for = "macos" },
 ]
 edit-cursor = [
-  { run = 'open -a Cursor "$@"', desc = "Cursor", orphan = true, for = "macos" },
+  { run = 'open -a Cursor %s', desc = "Cursor", orphan = true, for = "macos" },
 ]
 edit-pycharm = [
-  { run = 'open -a PyCharm "$@"', desc = "PyCharm", orphan = true, for = "macos" },
+  { run = 'open -a PyCharm %s', desc = "PyCharm", orphan = true, for = "macos" },
 ]
 open = [
-  { run = 'open "$@"', desc = "System default", orphan = true, for = "macos" },
+  { run = 'open %s', desc = "System default", orphan = true, for = "macos" },
 ]
 preview = [
-  { run = 'open -a Preview "$@"', desc = "Preview", orphan = true, for = "macos" },
+  { run = 'open -a Preview %s', desc = "Preview", orphan = true, for = "macos" },
 ]
 reveal = [
-  { run = 'open -R "$1"', desc = "Reveal in Finder", orphan = true, for = "macos" },
+  { run = 'open -R %s1', desc = "Reveal in Finder", orphan = true, for = "macos" },
 ]
 browser-personal = [
-  { run = '"$HOME/.local/bin/ff-personal" "$@"', desc = "Firefox (Personal)", orphan = true, for = "macos" },
+  { run = '"$HOME/.local/bin/ff-personal" %s', desc = "Firefox (Personal)", orphan = true, for = "macos" },
 ]
 browser-atmospheric = [
-  { run = '"$HOME/.local/bin/ff-atmospheric" "$@"', desc = "Firefox (AtmosphericAI)", orphan = true, for = "macos" },
+  { run = '"$HOME/.local/bin/ff-atmospheric" %s', desc = "Firefox (AtmosphericAI)", orphan = true, for = "macos" },
 ]
 browser-private = [
-  { run = '"$HOME/.local/bin/ff-private" "$@"', desc = "Firefox (Private)", orphan = true, for = "macos" },
+  { run = '"$HOME/.local/bin/ff-private" %s', desc = "Firefox (Private)", orphan = true, for = "macos" },
 ]
 safari = [
-  { run = 'open -a Safari "$@"', desc = "Safari", orphan = true, for = "macos" },
+  { run = 'open -a Safari %s', desc = "Safari", orphan = true, for = "macos" },
 ]
 extract = [
-  { run = 'ouch decompress -- "$@"', desc = "Extract here", for = "unix" },
+  { run = 'ouch decompress -- %s', desc = "Extract here", for = "unix" },
 ]
 # `prepend_rules` keeps Yazi's own defaults as a final fallback. Every code and
 # text rule offers the full editor chain, so Shift+O (open --interactive) lists

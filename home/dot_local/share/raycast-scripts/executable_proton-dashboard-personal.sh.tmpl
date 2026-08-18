@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Required parameters:
+# @raycast.schemaVersion 1
+# @raycast.title Proton Dashboard | Personal
+# @raycast.mode silent
+
+# Optional parameters:
+# @raycast.icon icons/helium.png
+# @raycast.iconDark icons/helium-dark.png
+# @raycast.packageName Firefox Profiles
+# @raycast.description Open the Proton account dashboard in the Personal Firefox profile
+{{- $personal := dig "firefoxPersonalProfile" "" . }}
+{{- if $personal }}
+
+exec "$HOME/.local/bin/helium-firefox" {{ $personal | quote }} "https://account.proton.me/u/0/mail/dashboard"
+{{- else }}
+
+echo "Firefox personal profile is not configured in Chezmoi. Run: chezmoi init" >&2
+exit 1
+{{- end }}

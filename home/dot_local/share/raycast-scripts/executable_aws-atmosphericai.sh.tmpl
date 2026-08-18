@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Required parameters:
+# @raycast.schemaVersion 1
+# @raycast.title AWS | AtmosphericAI
+# @raycast.mode silent
+
+# Optional parameters:
+# @raycast.icon icons/helium.png
+# @raycast.iconDark icons/helium-dark.png
+# @raycast.packageName Firefox Profiles
+# @raycast.description Open the AWS access portal in the AtmosphericAI Firefox profile
+{{- if .firefoxAtmosphericProfile }}
+
+exec "$HOME/.local/bin/helium-firefox" {{ .firefoxAtmosphericProfile | quote }} "https://atmospheric.awsapps.com/start/#/?tab=accounts"
+{{- else }}
+
+echo "Firefox AtmosphericAI profile is not configured in Chezmoi." >&2
+exit 1
+{{- end }}
