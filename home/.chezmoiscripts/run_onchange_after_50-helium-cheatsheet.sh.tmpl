@@ -1,0 +1,50 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+
+# Source hash: {{ include "dot_local/share/helium/cheatsheet.toml" | sha256sum }}
+
+# Regenerate the Raycast cheatsheet data from the TOML source. The source is
+# the single point of truth (chezmoi-managed); this writes the derived JSON that
+# the "Helium Shortcuts" Raycast extension reads at runtime. Runs whenever the
+# TOML changes, because its hash is embedded above.
+
+SRC="$HOME/.local/share/helium/cheatsheet.toml"
+OUT_DIR="$HOME/.local/state/helium"
+OUT="$OUT_DIR/cheatsheet.json"
+
+mkdir -p "$OUT_DIR"
+
+python3 - "$SRC" "$OUT" <<'PY'
+import json
+import sys
+import tomllib
+
+src, out = sys.argv[1], sys.argv[2]
+
+with open(src, "rb") as f:
+    data = tomllib.load(f)
+
+groups = []
+for g in data.get("group", []):
+    groups.append(
+        {
+            "name": g.get("name", ""),
+            "note": g.get("note", ""),
+            "binds": [
+                {"keys": b.get("keys", ""), "action": b.get("action", "")}
+                for b in g.get("binds", [])
+            ],
+        }
+    )
+
+payload = {"meta": data.get("meta", {}), "groups": groups}
+
+with open(out, "w") as f:
+    json.dump(payload, f, indent=2)
+    f.write("\n")
+
+total = sum(len(g["binds"]) for g in groups)
+print(f"helium cheatsheet: wrote {out} ({len(groups)} groups, {total} binds)")
+PY
+{{- end }}

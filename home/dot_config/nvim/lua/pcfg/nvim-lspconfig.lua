@@ -3,11 +3,21 @@
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
--- Helper to define and enable an LSP server
+-- Helper to define and enable an LSP server.
+-- On Rhodium, Nix guarantees every server binary exists. Here only the
+-- Brewfile's "Language servers" set is installed, and enabling a server
+-- whose binary is missing makes nvim warn on every matching file. So a
+-- server is only enabled when its command resolves to a real executable.
+-- Servers whose cmd is a function (or not resolvable) are enabled as-is.
 local function setup(name, config)
   config = config or {}
   config.capabilities = vim.tbl_deep_extend("force", capabilities, config.capabilities or {})
   vim.lsp.config(name, config)
+  local resolved = vim.lsp.config[name]
+  local cmd = config.cmd or (resolved and resolved.cmd)
+  if type(cmd) == "table" and vim.fn.executable(cmd[1]) == 0 then
+    return
+  end
   vim.lsp.enable(name)
 end
 

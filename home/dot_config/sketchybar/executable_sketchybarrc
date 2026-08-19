@@ -1,0 +1,49 @@
+#!/bin/sh
+# SketchyBar entry point. A gradual port of the Rhodium Waybar to macOS.
+#
+# Step 1: a centered clock only, in Kanso Zen colors and Berkeley Mono Rh.
+# Later steps add the right-hand cluster (network, thermals, cpu, memory,
+# battery, layout) one module at a time.
+
+CONFIG_DIR="$HOME/.config/sketchybar"
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+
+# shellcheck source=/dev/null
+. "$CONFIG_DIR/colors.sh"
+
+FONT="Berkeley Mono Rh"
+
+# --- Bar appearance ---------------------------------------------------------
+# blur_radius matches ghostty (background-blur-radius = 20), so the bar has
+# the same translucent look as the terminal instead of a flat opaque strip.
+sketchybar --bar \
+    height=30 \
+    position=top \
+    color="$BAR_BG" \
+    blur_radius=20 \
+    padding_left=8 \
+    padding_right=8 \
+    corner_radius=0 \
+    border_width=0
+
+# --- Defaults inherited by every item --------------------------------------
+sketchybar --default \
+    icon.font="$FONT:Medium:13.0" \
+    label.font="$FONT:Medium:13.0" \
+    icon.color="$FG" \
+    label.color="$FG" \
+    background.color="$TRANSPARENT" \
+    padding_left=6 \
+    padding_right=6
+
+# --- Clock (center) ---------------------------------------------------------
+sketchybar --add item clock center \
+    --set clock \
+        update_freq=1 \
+        script="$PLUGIN_DIR/clock.sh" \
+        label.color="$FG"
+
+# --- Finalize ---------------------------------------------------------------
+sketchybar --update
+
+echo "sketchybar configuration loaded."

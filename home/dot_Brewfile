@@ -10,6 +10,9 @@ brew "zsh-syntax-highlighting"
 
 # Prompt and terminal sessions
 brew "starship"
+# gdate for the starship command-timer hooks (fish functions/__starship_*.fish
+# and the zsh block in ~/.zshrc). macOS date has no millisecond precision.
+brew "coreutils"
 brew "zellij"
 
 # Git
@@ -88,6 +91,27 @@ brew "helix"
 # only for that generation step, never at runtime.
 brew "tree-sitter-cli"
 brew "node"
+
+# Language servers. On Rhodium, Nix provides every server the Neovim config
+# enables; here brew provides the base set. Servers missing from this machine
+# are skipped by the executable guard in nvim/lua/pcfg/nvim-lspconfig.lua, so
+# they never warn. nil and nixd (Nix LSPs) have no brew formula and need Nix
+# itself, so Nix files have no LSP on this machine.
+brew "lua-language-server"            # Lua
+brew "pyright"                        # Python (ruff below covers lint/format)
+brew "rust-analyzer"                  # Rust
+brew "gopls"                          # Go
+brew "metals"                         # Scala
+brew "bash-language-server"           # Bash
+brew "shellcheck"                     # bash-language-server runs it for diagnostics
+brew "fish-lsp"                       # Fish
+brew "marksman"                       # Markdown
+brew "taplo"                          # TOML
+brew "yaml-language-server"           # YAML
+brew "vscode-langservers-extracted"   # JSON, HTML, CSS, ESLint
+brew "texlab"                         # LaTeX
+brew "tinymist"                       # Typst
+brew "just-lsp"                       # just recipes
 
 # Python. The 2026 toolchain converged on uv + Ruff + a Rust type checker.
 brew "uv"

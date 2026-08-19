@@ -5,3 +5,13 @@
 *.swp
 *.swo
 
+# Raycast extension build and runtime artifacts. The extension source is
+# managed; these are produced locally by `npm install` / `ray develop` and must
+# not be tracked or removed by chezmoi.
+.local/share/helium/raycast-cheatsheet/node_modules
+.local/share/helium/raycast-cheatsheet/node_modules/**
+.local/share/helium/raycast-cheatsheet/package-lock.json
+.local/share/helium/raycast-cheatsheet/raycast-env.d.ts
+.local/share/helium/raycast-cheatsheet/.raycast
+.local/share/helium/raycast-cheatsheet/.raycast/**
+

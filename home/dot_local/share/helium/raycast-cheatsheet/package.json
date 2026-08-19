@@ -1,0 +1,36 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "helium-cheatsheet",
+  "title": "Helium Shortcuts",
+  "description": "Searchable cheatsheet of Helium keyboard shortcuts, generated from the chezmoi-managed TOML source.",
+  "icon": "command-icon.png",
+  "author": "pabloagn",
+  "license": "MIT",
+  "categories": ["Documentation", "Productivity"],
+  "commands": [
+    {
+      "name": "cheatsheet",
+      "title": "Helium Shortcuts",
+      "subtitle": "Helium",
+      "description": "Search Helium keyboard shortcuts",
+      "mode": "view"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.104.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "eslint": "^9",
+    "prettier": "^3",
+    "typescript": "^5"
+  },
+  "scripts": {
+    "build": "ray build",
+    "dev": "ray develop",
+    "lint": "ray lint",
+    "fix-lint": "ray lint --fix"
+  }
+}

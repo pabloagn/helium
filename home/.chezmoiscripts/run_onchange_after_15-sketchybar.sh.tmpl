@@ -1,0 +1,22 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+
+# Starts SketchyBar and reloads it whenever its configuration changes. The
+# hashes below make chezmoi re-run this script on any edit to the entry point,
+# the palette, or a plugin.
+# config hash: {{ include "dot_config/sketchybar/executable_sketchybarrc" | sha256sum }}{{ include "dot_config/sketchybar/colors.sh" | sha256sum }}{{ include "dot_config/sketchybar/plugins/executable_clock.sh" | sha256sum }}
+
+if ! command -v sketchybar >/dev/null 2>&1; then
+    echo "sketchybar is not installed; skipping reload." >&2
+    exit 0
+fi
+
+# Start the service only when it is not already running, then reload so
+# config edits take effect. The jq guard keeps the script idempotent.
+if brew services info sketchybar --json | jq -e '.[0].running' >/dev/null; then
+    sketchybar --reload
+else
+    brew services start sketchybar
+fi
+{{- end }}

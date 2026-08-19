@@ -13,6 +13,15 @@ fish_add_path /opt/homebrew/bin
 fish_add_path "$HOME/.local/bin"
 
 if status is-interactive
+	# --- SHLVL rebase ---
+	# Same rebase as ~/.zshrc: macOS wrapper shells inflate SHLVL, so the
+	# first interactive shell of a terminal resets it to 1 and nested
+	# shells count from there.
+	if not set -q HELIUM_SHLVL_BASE
+		set -gx HELIUM_SHLVL_BASE $SHLVL
+		set -gx SHLVL 1
+	end
+
 	# --- Vi mode ---
 	# fish_hybrid_key_bindings is a function fish ships: vi bindings in normal
 	# mode, plus the emacs editing keys in insert mode. Setting the variable is
@@ -60,6 +69,16 @@ if status is-interactive
 		bind -M visual -m default y fish_clipboard_copy end-selection repaint-mode
 		bind -M visual p fish_clipboard_paste
 		bind -M visual P fish_clipboard_paste
+	end
+
+	# --- Starship command timer ---
+	# These set STARSHIP_CUSTOM_START/END for [custom.times] in starship.toml.
+	# Sourced explicitly because fish only autoloads a function when it is
+	# called by name, and --on-event handlers are never called by name.
+	# Verbatim copies of Rhodium's files; they need gdate from coreutils.
+	if command -q gdate
+		source ~/.config/fish/functions/__starship_start_timer.fish
+		source ~/.config/fish/functions/__starship_end_timer.fish
 	end
 
 	starship init fish | source

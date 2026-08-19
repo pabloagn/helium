@@ -1,0 +1,8 @@
+# Targets to remove on apply. Keep this list tight and specific.
+#
+# The keyboard cheatsheet moved from a Neovim-viewed markdown file to a native
+# Raycast extension (source in dot_local/share/helium/raycast-cheatsheet). These
+# two files are the old setup; chezmoi does not delete them on source removal
+# alone, so they are removed here.
+.local/share/helium/cheatsheet.md
+.local/share/raycast-scripts/helium-cheatsheet.sh

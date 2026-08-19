@@ -1,5 +1,16 @@
 [[ $- != *i* ]] && return
 
+# --- SHLVL rebase ---
+# macOS terminals reach the first interactive shell through wrapper shells
+# (login, `zsh -c` exec chains), each of which increments SHLVL. A fresh
+# window therefore starts at 2 or 3 and starship's shlvl module shows
+# phantom nesting. Rebase the first interactive shell of every terminal to
+# 1. Nested shells inherit the marker, skip this block, and count normally.
+if [[ -z "$HELIUM_SHLVL_BASE" ]]; then
+  export HELIUM_SHLVL_BASE="$SHLVL"
+  export SHLVL=1
+fi
+
 BREW_PREFIX="$(brew --prefix 2>/dev/null)"
 
 HISTFILE="$HOME/.zsh_history"
@@ -194,6 +205,38 @@ export BAT_THEME="ansi"
 
 source "$HOME/.config/zsh/aliases.zsh"
 source "$HOME/.config/zsh/functions.zsh"
+
+# --- Starship command timer ---
+# Feeds [custom.times] in ~/.config/starship.toml: wall-clock start and end
+# times, shown only for commands that ran 5 seconds or longer. Mirrors
+# Rhodium's fish functions __starship_start_timer / __starship_end_timer,
+# including their behavior of leaving the start stamp in place between
+# commands. gdate comes from coreutils; without it the hooks stay unbound
+# and the prompt simply omits the times.
+if command -v gdate >/dev/null 2>&1; then
+  _helium_starship_start_timer() {
+    export STARSHIP_CMD_START_EPOCH_MS="$(gdate +%s%3N)"
+  }
+  _helium_starship_end_timer() {
+    local start_ms="$STARSHIP_CMD_START_EPOCH_MS"
+    [[ -n "$start_ms" ]] || return 0
+    local end_ms=$(gdate +%s%3N)
+    local delta_ms=$(( end_ms - start_ms ))
+    if (( delta_ms >= 5000 )); then
+      local minutes=$(( delta_ms / 60000 ))
+      local seconds=$(( (delta_ms % 60000) / 1000 ))
+      export STARSHIP_CUSTOM_DURATION="${minutes}m${seconds}s"
+      local start_epoch_s=$(( start_ms / 1000 ))
+      local end_epoch_s=$(( start_epoch_s + minutes * 60 + seconds ))
+      export STARSHIP_CUSTOM_START="$(gdate -d "@$start_epoch_s" "+%T")"
+      export STARSHIP_CUSTOM_END="$(gdate -d "@$end_epoch_s" "+%T")"
+    else
+      unset STARSHIP_CUSTOM_DURATION STARSHIP_CUSTOM_START STARSHIP_CUSTOM_END
+    fi
+  }
+  add-zsh-hook preexec _helium_starship_start_timer
+  add-zsh-hook precmd _helium_starship_end_timer
+fi
 
 eval "$(starship init zsh)"
 

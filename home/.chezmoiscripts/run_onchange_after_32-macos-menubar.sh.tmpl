@@ -1,0 +1,15 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+
+# Hide the native macOS menu bar. SketchyBar replaces it, and macOS offers no
+# way to remove the native bar -- only to auto-hide it. This is the standard
+# SketchyBar setup: the native bar stays reachable by moving the mouse to the
+# top edge of the screen.
+#
+# _HIHideMenuBar is the "Automatically hide and show the menu bar" setting in
+# System Settings > Control Center, set to Always.
+defaults write NSGlobalDomain _HIHideMenuBar -bool true
+
+echo "Native menu bar set to auto-hide. Log out and log in if it stays visible."
+{{- end }}
