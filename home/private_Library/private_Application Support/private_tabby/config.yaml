@@ -76,9 +76,9 @@ terminal:
       - '#C5C9C7'
 
 appearance:
-  # Matches Ghostty's background-opacity 0.97 plus its blur. Tabby calls the
+  # Matches Ghostty's background-opacity 0.92 plus its blur. Tabby calls the
   # blur "vibrancy"; it is the macOS window effect, not a shader.
-  opacity: 0.97
+  opacity: 0.92
   vibrancy: true
   vibrancyType: blur
   frame: thin

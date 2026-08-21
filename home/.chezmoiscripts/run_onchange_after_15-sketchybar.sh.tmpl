@@ -13,6 +13,22 @@ if ! command -v sketchybar >/dev/null 2>&1; then
     exit 0
 fi
 
+# Master switch. SketchyBar is parked for now (2026-08-21): the bar works, but
+# the widget set is not ready, so the native menu bar is back in service (see
+# run_onchange_after_32-macos-menubar). The config in ~/.config/sketchybar is
+# kept intact. To re-enable: set this to 1 here, set the menubar script back
+# to auto-hide, and run `just apply`.
+SKETCHYBAR_ENABLED=0
+
+if [ "$SKETCHYBAR_ENABLED" -eq 0 ]; then
+    # Idempotent: stopping an already-stopped service is a no-op.
+    if brew services info sketchybar --json | jq -e '.[0].running' >/dev/null; then
+        brew services stop sketchybar
+    fi
+    echo "sketchybar is disabled; service stopped, config kept."
+    exit 0
+fi
+
 # Start the service only when it is not already running, then reload so
 # config edits take effect. The jq guard keeps the script idempotent.
 if brew services info sketchybar --json | jq -e '.[0].running' >/dev/null; then

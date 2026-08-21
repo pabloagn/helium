@@ -2,7 +2,8 @@
 # Kanso Zen palette. Matches ghostty (theme = "Kanso Zen") and the yazi theme.
 # SketchyBar colors are 0xAARRGGBB: alpha, then red, green, blue.
 
-# 0xf7 alpha = 0.97 opacity, the same translucency ghostty uses. The hex is
+# 0xf7 alpha = 0.97 opacity. The terminals sit lower (0.92) since 2026-08-21;
+# the bar deliberately stays more solid so its text keeps contrast. The hex is
 # the Rhodium Waybar @bg (#090E13), identical to the Kanso Zen background.
 export BAR_BG=0xf7090e13
 export FG=0xffc5c9c7            # foreground text

@@ -2,14 +2,19 @@
 #!/bin/sh
 set -eu
 
-# Hide the native macOS menu bar. SketchyBar replaces it, and macOS offers no
-# way to remove the native bar -- only to auto-hide it. This is the standard
-# SketchyBar setup: the native bar stays reachable by moving the mouse to the
-# top edge of the screen.
+# Native menu bar visibility. Paired with the SketchyBar master switch in
+# run_onchange_after_15-sketchybar: when SketchyBar is enabled the native bar
+# auto-hides, and when SketchyBar is parked (current state, 2026-08-21) the
+# native bar is visible. Flip both together.
 #
-# _HIHideMenuBar is the "Automatically hide and show the menu bar" setting in
-# System Settings > Control Center, set to Always.
-defaults write NSGlobalDomain _HIHideMenuBar -bool true
+# The osascript path applies the change live, without a logout: System Events
+# exposes the same "Automatically hide and show the menu bar" preference the
+# System Settings toggle writes. The defaults fallback covers a machine where
+# Automation permission is not granted yet; it needs a logout to take effect.
+if ! osascript -e 'tell application "System Events" to set autohide menu bar of dock preferences to false' >/dev/null 2>&1; then
+    defaults write NSGlobalDomain _HIHideMenuBar -bool false
+    echo "Automation permission missing; wrote the default instead. Log out and log in to apply." >&2
+fi
 
-echo "Native menu bar set to auto-hide. Log out and log in if it stays visible."
+echo "Native menu bar restored (always visible)."
 {{- end }}

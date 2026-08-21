@@ -8,10 +8,10 @@
   "term:cursorblink": false,
   "term:scrollback": 100000,
   "term:macoptionismeta": true,
-  "term:transparency": 0.03,
+  "term:transparency": 0.08,
 
   "window:blur": true,
-  "window:opacity": 0.97,
+  "window:opacity": 0.92,
   "window:nativetitlebar": false,
   "window:savelastwindow": true
 }

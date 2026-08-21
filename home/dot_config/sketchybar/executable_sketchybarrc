@@ -74,7 +74,29 @@ sketchybar --default \
     padding_right=6
 
 # --- Items ------------------------------------------------------------------
-# None yet.
+# Widget 1: the native Control Center toggle, mirrored into the bar as an
+# alias. An alias is a live screen copy of a real menu-bar item, so it looks
+# and updates exactly like the original.
+#
+# Aliases need Screen Recording permission (System Settings > Privacy &
+# Security > Screen & System Audio Recording > sketchybar), and SketchyBar
+# must be restarted after granting. Until then the query below returns an
+# error instead of JSON, jq finds no match, and the block is skipped -- the
+# bar still loads cleanly.
+#
+# The item name is discovered at load time instead of hardcoded: Tahoe names
+# the Control Center toggle "Control Center,BentoBox-<n>" and the suffix is
+# not stable across boots or displays.
+CC_ITEM=$(sketchybar --query default_menu_items 2>/dev/null \
+    | jq -r '[.[] | select(test("BentoBox"))][0] // empty' 2>/dev/null || true)
+if [ -n "$CC_ITEM" ]; then
+    sketchybar --add alias "$CC_ITEM" right \
+        --rename "$CC_ITEM" control_center \
+        --set control_center \
+            alias.update_freq=2 \
+            padding_left=2 \
+            padding_right=2
+fi
 
 # --- Finalize ---------------------------------------------------------------
 sketchybar --update
