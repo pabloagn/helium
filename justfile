@@ -38,6 +38,7 @@ doctor:
     brew bundle check --file "{{root}}/home/dot_Brewfile"
     zsh -n "{{root}}/home/dot_zshrc"
     fish -n "{{root}}/home/dot_config/fish/config.fish" "{{root}}/home/dot_config/fish/functions/yy.fish"
+    sh -n "{{root}}/home/dot_config/borders/executable_bordersrc"
     sh -n "{{root}}/home/dot_local/bin/executable_aerospace-mode-toggle" "{{root}}/home/dot_local/bin/executable_aerospace-mode-notify" "{{root}}/home/dot_local/bin/executable_aerospace-open-here" "{{root}}/home/dot_local/bin/executable_aerospace-window-picker" "{{root}}/home/dot_local/bin/executable_aerospace-workspace-picker" "{{root}}/home/dot_local/bin/executable_aerospace-empty-workspace" "{{root}}/home/dot_local/bin/executable_helium-screenshot" "{{root}}/home/dot_local/bin/executable_helium-firefox"
     jq empty "{{root}}/home/dot_config/private_karabiner/private_karabiner.json"
     jq empty "{{root}}/home/dot_config/waveterm/settings.json" "{{root}}/home/dot_config/waveterm/termthemes.json"

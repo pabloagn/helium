@@ -1,0 +1,30 @@
+#!/bin/sh
+# JankyBorders. AeroSpace tiles windows without any decoration, so this border
+# is the only thing that marks which window holds focus. It is the macOS
+# analogue of Rhodium's Niri focus-ring.
+#
+# `borders` reads this file at startup, then stays running. Every argument
+# below is a command-line option; this file only pre-supplies them. Upstream's
+# example uses a bash array, which is why it carries a bash shebang. Plain
+# arguments keep this file POSIX, so `just doctor` can lint it with
+# `sh -n` like every other script in the repository.
+#
+# Colors are 0xAARRGGBB: alpha, then red, green, blue. The palette is Kanso
+# Zen, the same one ghostty, yazi and sketchybar/colors.sh use. The active
+# color is that palette's blue accent (0xff8ba4b0); the inactive one is its
+# muted gray (0xff6b7e84), dropped to 0x80 alpha so unfocused windows recede.
+#
+# `order=above` draws the border over the window rather than behind it, because
+# below leaves it invisible on any window that paints to its own edge.
+# `ax_focus=on` follows the accessibility API's focused window instead of
+# polling the window server, which keeps the border in step with AeroSpace's
+# focus commands rather than a frame behind them.
+
+exec borders \
+    style=round \
+    width=2.0 \
+    hidpi=on \
+    active_color=0xff8ba4b0 \
+    inactive_color=0x806b7e84 \
+    order=above \
+    ax_focus=on

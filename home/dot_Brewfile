@@ -235,6 +235,39 @@ cask "stablyai/orca/orca"
 tap "FelixKratz/formulae"
 brew "sketchybar"
 
+# JankyBorders: draws a colored border around the focused window. AeroSpace
+# tiles without any window decoration, so nothing else marks which window has
+# focus. This is the macOS analogue of Niri's focus-ring in Rhodium.
+#
+# Tap review: the same tap as sketchybar. borders.rb builds from the pinned
+# v1.9.0 source tag on github.com/FelixKratz/JankyBorders with a matching url,
+# GPL-3.0-only. No prebuilt binary is downloaded -- Homebrew compiles it. The
+# formula declares a `service` block, so it runs via
+# `brew services start borders`.
+#
+# The same Homebrew 6 trust rule applies, so
+# run_onchange_after_10-homebrew-bundle trusts this formula too.
+brew "borders"
+
+# AutoRaise: focus follows the mouse, done right. AeroSpace's own
+# focus-follows-mouse switch follows its window tree rather than the real
+# stacking order, so hovering a fullscreen or floating window (an alert, a
+# dialog) hands focus to the tiled window underneath it. AutoRaise reads the
+# actual topmost window under the cursor through the accessibility API, so
+# floating windows keep focus. AeroSpace's switch therefore stays false.
+#
+# Tap review: Dimentium/homebrew-autoraise ships autoraise.rb, which builds
+# from the pinned v5.6 source tag on github.com/sbmpost/AutoRaise with a
+# pinned sha256, GPL-3.0. No prebuilt binary is downloaded -- Homebrew
+# compiles it. The formula declares a `service` block. The tap also carries an
+# `autoraiseapp` cask with `sha256 :no_check`; that cask is deliberately not
+# used here. Upstream is active (2,770 stars, commits through August 2026).
+#
+# The same Homebrew 6 trust rule applies, so
+# run_onchange_after_10-homebrew-bundle trusts this formula too.
+tap "Dimentium/autoraise"
+brew "autoraise"
+
 
 # ---------------------------------------------------------------------------
 # Fonts

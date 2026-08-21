@@ -21,13 +21,18 @@ accordion-padding = 32
 default-root-container-layout = 'tiles'
 default-root-container-orientation = 'auto'
 
-# Keyboard focus may cross displays without leaving the pointer behind.
-on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+# Keyboard focus may cross displays without leaving the pointer behind. The
+# pointer warps to the focused window, not the monitor centre: AutoRaise
+# focuses whatever ends up under the cursor, so landing on the focused window
+# keeps keyboard focus and mouse focus in agreement.
+on-focused-monitor-changed = ['move-mouse window-lazy-center']
 on-mode-changed = ['exec-and-forget {{ .chezmoi.homeDir }}/.local/bin/aerospace-mode-notify']
 automatically-unhide-macos-hidden-apps = true
-# Focus must never follow the mouse. A fullscreen window still sits on top of
-# the tiled layout underneath it, so any pointer movement would otherwise hand
-# focus to whichever window happens to be beneath the cursor.
+# This switch must stay false. It follows AeroSpace's window tree rather than
+# the real stacking order, so hovering a fullscreen or floating window (an
+# alert, a dialog) hands focus to the tiled window underneath it. Hover focus
+# is provided by AutoRaise instead (config in ~/.config/AutoRaise/config),
+# which reads the actual topmost window under the cursor.
 focus-follows-mouse.enabled = false
 
 # Every workspace starts from the same neutral shape. Workspaces are not

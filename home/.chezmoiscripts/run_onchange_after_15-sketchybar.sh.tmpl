@@ -4,8 +4,9 @@ set -eu
 
 # Starts SketchyBar and reloads it whenever its configuration changes. The
 # hashes below make chezmoi re-run this script on any edit to the entry point,
-# the palette, or a plugin.
-# config hash: {{ include "dot_config/sketchybar/executable_sketchybarrc" | sha256sum }}{{ include "dot_config/sketchybar/colors.sh" | sha256sum }}{{ include "dot_config/sketchybar/plugins/executable_clock.sh" | sha256sum }}
+# the palette, or a plugin. The plugins are globbed rather than listed, so
+# adding or removing one never leaves a stale path in this template.
+# config hash: {{ include "dot_config/sketchybar/executable_sketchybarrc" | sha256sum }}{{ include "dot_config/sketchybar/colors.sh" | sha256sum }}{{ range (sortAlpha (glob (joinPath .chezmoi.sourceDir "dot_config/sketchybar/plugins/*"))) }}{{ include . | sha256sum }}{{ end }}
 
 if ! command -v sketchybar >/dev/null 2>&1; then
     echo "sketchybar is not installed; skipping reload." >&2

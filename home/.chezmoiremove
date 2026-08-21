@@ -6,3 +6,8 @@
 # alone, so they are removed here.
 .local/share/helium/cheatsheet.md
 .local/share/raycast-scripts/helium-cheatsheet.sh
+
+# The SketchyBar centered clock. The built-in display is notched and dead
+# center sits behind the camera housing, so the center region stays empty and
+# the clock item is gone. This drops the orphaned plugin left in the target.
+.config/sketchybar/plugins

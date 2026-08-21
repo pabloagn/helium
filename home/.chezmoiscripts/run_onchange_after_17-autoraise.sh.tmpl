@@ -1,0 +1,22 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+
+# Starts AutoRaise and restarts it whenever its configuration changes. The
+# hash below makes chezmoi re-run this script on any edit to the config.
+# config hash: {{ include "dot_config/AutoRaise/config" | sha256sum }}
+
+if ! command -v AutoRaise >/dev/null 2>&1; then
+    echo "AutoRaise is not installed; skipping restart." >&2
+    exit 0
+fi
+
+# AutoRaise reads its config only at startup, so restart the service on a
+# config edit; start it when it is not running yet. The jq guard keeps the
+# script idempotent.
+if brew services info autoraise --json | jq -e '.[0].running' >/dev/null; then
+    brew services restart autoraise
+else
+    brew services start autoraise
+fi
+{{- end }}

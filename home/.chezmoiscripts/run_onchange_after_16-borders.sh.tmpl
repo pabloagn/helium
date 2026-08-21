@@ -1,0 +1,22 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+
+# Starts JankyBorders and restarts it whenever its configuration changes. The
+# hash below makes chezmoi re-run this script on any edit to bordersrc.
+# config hash: {{ include "dot_config/borders/executable_bordersrc" | sha256sum }}
+
+if ! command -v borders >/dev/null 2>&1; then
+    echo "borders is not installed; skipping restart." >&2
+    exit 0
+fi
+
+# borders has no reload command, unlike sketchybar. Restart the service so a
+# config edit takes effect; start it when it is not running yet. The jq guard
+# keeps the script idempotent.
+if brew services info borders --json | jq -e '.[0].running' >/dev/null; then
+    brew services restart borders
+else
+    brew services start borders
+fi
+{{- end }}

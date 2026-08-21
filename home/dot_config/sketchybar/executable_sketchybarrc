@@ -1,12 +1,16 @@
 #!/bin/sh
 # SketchyBar entry point. A gradual port of the Rhodium Waybar to macOS.
 #
-# Step 1: a centered clock only, in Kanso Zen colors and Berkeley Mono Rh.
-# Later steps add the right-hand cluster (network, thermals, cpu, memory,
-# battery, layout) one module at a time.
+# Step 1: the bar itself, in Kanso Zen colors, correctly seated in the notch
+# strip. No items yet. Later steps add the right-hand cluster (network,
+# thermals, cpu, memory, battery, layout) one module at a time.
+#
+# Nothing goes in the center region on this machine: the built-in display is
+# notched, and dead center is behind the camera housing. SketchyBar's
+# notch_width does not make center items dodge the notch (verified against
+# v2.24.0), so the center stays empty and modules live left and right.
 
 CONFIG_DIR="$HOME/.config/sketchybar"
-PLUGIN_DIR="$CONFIG_DIR/plugins"
 
 # shellcheck source=/dev/null
 . "$CONFIG_DIR/colors.sh"
@@ -16,9 +20,42 @@ FONT="Berkeley Mono Rh"
 # --- Bar appearance ---------------------------------------------------------
 # blur_radius matches ghostty (background-blur-radius = 20), so the bar has
 # the same translucent look as the terminal instead of a flat opaque strip.
+#
+# Notch geometry, measured on this Mac (Mac17,9, 14-inch, 1512x982 points) via
+# NSScreen: safeAreaInsets.top = 32 pt, notch width = 185 pt.
+#
+#   notch_display_height  bar height on notched displays only. Set to the notch
+#                         height so the bar exactly fills the menu bar strip.
+#   notch_width           the real notch width, replacing the 200 pt default.
+#
+# Both apply only to the built-in display, so the external monitors keep the
+# plain 30 pt bar. A global y_offset would have moved those off-screen.
+#
+# Do NOT add notch_offset here. It interacts with topmost: at the normal
+# window level macOS seats the bar below the notch strip (y=32) and a -32
+# offset corrects it, but at the topmost level the bar already seats at y=0,
+# so the same offset pushes the window fully off-screen (verified: the bar
+# window landed at Y=-32 and vanished from the built-in display).
+# topmost=on keeps SketchyBar above the native menu bar. macOS cannot fully
+# disable the native bar: auto-hide still slides it down over anything at the
+# top edge on hover. With topmost=on it slides in underneath SketchyBar
+# instead, so only one bar is ever visible. This is the maintainer's
+# recommended setup (SketchyBar discussion #229) for non-yabai systems.
+#
+# Known consequence: the native bar becomes unreachable by mouse. App menus
+# come from the keyboard (Cmd-Shift-/ opens Help search), Control Center from
+# its keyboard shortcut or Raycast.
+#
+# The screen-recording privacy dot at the top right is NOT the native bar. The
+# Window Server draws it at the maximum window layer whenever an app records
+# the screen (AltTab does, for its window previews). Nothing can cover it;
+# that is deliberate macOS security design.
 sketchybar --bar \
     height=30 \
+    notch_display_height=32 \
+    notch_width=185 \
     position=top \
+    topmost=on \
     color="$BAR_BG" \
     blur_radius=20 \
     padding_left=8 \
@@ -36,12 +73,8 @@ sketchybar --default \
     padding_left=6 \
     padding_right=6
 
-# --- Clock (center) ---------------------------------------------------------
-sketchybar --add item clock center \
-    --set clock \
-        update_freq=1 \
-        script="$PLUGIN_DIR/clock.sh" \
-        label.color="$FG"
+# --- Items ------------------------------------------------------------------
+# None yet.
 
 # --- Finalize ---------------------------------------------------------------
 sketchybar --update

@@ -1,0 +1,37 @@
+#AutoRaise config file
+#
+# Focus follows the mouse, replacing AeroSpace's focus-follows-mouse switch
+# (kept false in aerospace.toml). AeroSpace's switch follows its own window
+# tree, so hovering a fullscreen or floating window focused the tiled window
+# underneath it. AutoRaise reads the real topmost window under the cursor
+# through the accessibility API, so alerts and dialogs keep focus.
+#
+# This is the standard raise mode: the hovered window is focused and raised.
+# Tiles do not overlap, so raise changes nothing for them. AutoRaise's
+# focus-without-raise mode is deliberately not used -- it needs the
+# EXPERIMENTAL_FOCUS_FIRST compile flag, which relies on private API calls
+# that can break on any macOS update.
+
+# Poll every 20ms, the minimum AutoRaise allows. delay is in units of
+# pollMillis; 1 raises on the first poll that finds the cursor on a window.
+pollMillis=20
+delay=1
+
+# Focus immediately while the mouse is still moving, Niri-style. The cost is
+# that sweeping the cursor across the screen focuses every window it crosses;
+# that is the intended behaviour here, not a bug.
+requireMouseStop=false
+mouseDelta=0.0
+
+# Never steal focus from the macOS credential dialog. It is a floating window
+# by nature, and losing focus mid-password is the worst version of this bug.
+stayFocusedBundleIds="com.apple.SecurityAgent"
+
+# Do not raise anything right after a workspace switch. AeroSpace has just
+# placed focus deliberately; the cursor position is stale at that moment.
+ignoreSpaceChanged=true
+
+# Hold Control to suspend AutoRaise temporarily. Hyper contains Control, so
+# every Hyper chord also suspends it -- which is exactly right: keyboard
+# focus commands must win while they are being issued.
+disableKey="control"
