@@ -170,6 +170,15 @@ cask "telegram"
 cask "signal"
 cask "brave-browser"
 
+# SoundSource: system-wide audio control. Per-app volume, per-app output device,
+# and a 10-band EQ that also applies to a single app rather than the whole
+# machine. It can host Audio Unit effects too, so a parametric EQ plugin can sit
+# in the chain later. macOS has no equaliser of its own; this is the fix.
+# It installs an audio driver, so the first launch needs a system extension
+# approval in System Settings and a reboot. Paid, and it self-updates, so
+# `brew upgrade` is a no-op for it unless called with --greedy.
+cask "soundsource"
+
 # Terminal emulators. All four are official homebrew-cask entries.
 # Ghostty is the incumbent: ~/.config/ghostty in this repo configures it, so
 # without this line a fresh machine gets the config and no app.
