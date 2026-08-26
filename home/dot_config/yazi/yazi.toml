@@ -20,10 +20,14 @@ mouse_events = ["click", "scroll", "touch", "move", "drag"]
 [preview]
 wrap = "no"
 tab_size = 2
-max_width = 2000
-max_height = 1200
-image_filter = "nearest"
-image_quality = 75
+# Doubled from 2000x1200 and switched from the "nearest" filter: PDF pages are
+# rendered by pdftoppm into this bounding box and then scaled by image_filter,
+# so small digits were blurring. lanczos3 is the sharpest scaler Yazi offers;
+# 90 is the top of image_quality's 50-90 range.
+max_width = 4000
+max_height = 2400
+image_filter = "lanczos3"
+image_quality = 90
 image_delay = 20
 
 # Yazi 26 renamed these. Rhodium set `micro_workers` / `macro_workers`, which
@@ -138,6 +142,9 @@ open = [
 preview = [
   { run = 'open -a Preview %s', desc = "Preview", orphan = true, for = "macos" },
 ]
+pdf-expert = [
+  { run = 'open -a "PDF Expert" %s', desc = "PDF Expert", orphan = true, for = "macos" },
+]
 reveal = [
   { run = 'open -R %s1', desc = "Reveal in Finder", orphan = true, for = "macos" },
 ]
@@ -183,7 +190,7 @@ prepend_rules = [
 
   # Media and documents: viewers first, editors still reachable.
   { url = "*.{jpg,jpeg,png,gif,webp,bmp,ico,tiff,avif,heic,heif}", use = ["open", "preview", "reveal"] },
-  { url = "*.pdf", use = ["open", "preview", "browser-personal", "browser-atmospheric", "browser-private", "safari", "reveal"] },
+  { url = "*.pdf", use = ["pdf-expert", "preview", "open", "browser-personal", "browser-atmospheric", "browser-private", "reveal"] },
   { mime = "image/*", use = ["open", "preview", "reveal"] },
   { mime = "{audio,video}/*", use = ["open", "reveal"] },
 
