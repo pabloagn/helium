@@ -161,6 +161,12 @@ cask "neovide-app"
 # Craft: native document editor. Official homebrew-cask formula, and the app
 # self-updates, so `brew upgrade` is a no-op unless called with --greedy.
 cask "craft"
+# Granola: AI meeting notepad. It reads the calendar for the meeting list and
+# captures system audio, so the first launch needs both a calendar grant and a
+# Screen Recording grant in System Settings -- macOS files system-audio capture
+# under Screen Recording. It self-updates, so `brew upgrade` is a no-op for it
+# unless called with --greedy.
+cask "granola"
 
 # Consumer applications: VPN, media, and messaging.
 cask "protonvpn"

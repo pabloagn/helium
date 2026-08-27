@@ -13,15 +13,19 @@
 # that can break on any macOS update.
 
 # Poll every 20ms, the minimum AutoRaise allows. delay is in units of
-# pollMillis; 1 raises on the first poll that finds the cursor on a window.
+# pollMillis, and any delay > 1 also demands a momentary mouse stop before the
+# raise -- that stop is the real sweep filter, not the length of the delay.
+# So the delay stays as short as it can be while still engaging the stop rule:
+# 2 polls = 40ms. Larger values (a 200ms dwell was tried) just feel broken,
+# because the clock only starts once the mouse has already stopped.
 pollMillis=20
-delay=1
+delay=2
 
-# Focus immediately while the mouse is still moving, Niri-style. The cost is
-# that sweeping the cursor across the screen focuses every window it crosses;
-# that is the intended behaviour here, not a bug.
+# mouseDelta is the movement threshold for that stop detection. 0.0 demands a
+# pixel-perfect standstill, which made the raise miss natural hand tremor;
+# 0.1 is the value upstream's own sample config ships.
 requireMouseStop=false
-mouseDelta=0.0
+mouseDelta=0.1
 
 # Never steal focus from the macOS credential dialog. It is a floating window
 # by nature, and losing focus mid-password is the worst version of this bug.
