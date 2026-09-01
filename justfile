@@ -11,7 +11,15 @@ diff:
 status:
     chezmoi --source "{{root}}" status
 
-apply:
+# `packages` runs first on purpose. Some casks need root for one install step,
+# and chezmoi runs its scripts through a pipe, so sudo's prompt arrives garbled
+# ("Waiting for data ... Password:") and the run looks hung when it is only
+# waiting for typing. Installing here, on a real terminal, means the prompt is
+# readable -- and by the time chezmoi's own `brew bundle --global` runs there is
+# nothing left to install, so it never asks.
+
+# Install packages, then apply the dotfiles.
+apply: packages
     chezmoi --source "{{root}}" apply --verbose
 
 verify:

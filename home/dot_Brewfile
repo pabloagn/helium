@@ -167,6 +167,12 @@ cask "craft"
 # under Screen Recording. It self-updates, so `brew upgrade` is a no-op for it
 # unless called with --greedy.
 cask "granola"
+# LibreOffice: the office suite for the doc/xls/ppt files that the [open] rules
+# in yazi.toml currently hand to the system default. This is the `libreoffice`
+# cask (the "fresh" release line), not `libreoffice-still` (the conservative
+# one). It ships extra CLI binaries alongside the app, `soffice` among them,
+# which converts documents headlessly.
+cask "libreoffice"
 
 # Consumer applications: VPN, media, and messaging.
 cask "protonvpn"
