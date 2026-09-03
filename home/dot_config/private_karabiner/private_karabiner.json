@@ -25,52 +25,213 @@
             ]
           },
           {
-            "description": "AeroSpace Hyper layer actions",
+            "description": "OmniWM directional aliases",
             "manipulators": [
               {
-                "conditions": [
-                  {
-                    "name": "hyper_layer",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "r",
-                  "modifiers": {
-                    "optional": [
-                      "any"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "\"$HOME/.local/bin/aerospace-mode-toggle\" resize"
-                  }
-                ],
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "left_arrow", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command focus left" }],
                 "type": "basic"
               },
               {
-                "conditions": [
-                  {
-                    "name": "hyper_layer",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "semicolon",
-                  "modifiers": {
-                    "optional": [
-                      "any"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "\"$HOME/.local/bin/aerospace-mode-toggle\" service"
-                  }
-                ],
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "down_arrow", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command focus down" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "up_arrow", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command focus up" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "right_arrow", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command focus right" }],
+                "type": "basic"
+              },
+              {
+                "from": { "key_code": "left_arrow", "modifiers": { "mandatory": ["option", "shift"] } },
+                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command move left" }],
+                "type": "basic"
+              },
+              {
+                "from": { "key_code": "down_arrow", "modifiers": { "mandatory": ["option", "shift"] } },
+                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command move-column-to-workspace down" }],
+                "type": "basic"
+              },
+              {
+                "from": { "key_code": "up_arrow", "modifiers": { "mandatory": ["option", "shift"] } },
+                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command move-column-to-workspace up" }],
+                "type": "basic"
+              },
+              {
+                "from": { "key_code": "right_arrow", "modifiers": { "mandatory": ["option", "shift"] } },
+                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command move right" }],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "OmniWM Hyper application and utility shortcuts",
+            "manipulators": [
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "c", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" close" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "return_or_enter", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" terminal" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "w", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" terminal-right" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "b", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" firefox-personal" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "z", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" firefox-atmospheric" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "d", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" yazi" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "e", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" nvim" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "i", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" vscode" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "n", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" notion" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "m", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" slack" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "t", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" teams" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "g", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" spotify" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "p", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" onepassword" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "o", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" downloads" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "q", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" calculator" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "escape", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" sleep-display" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "s", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" screenshot-screen" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
+                "from": { "key_code": "y", "modifiers": { "optional": ["any"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" screenshot-window" }],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "OmniWM Option-Shift alternate application shortcuts",
+            "manipulators": [
+              {
+                "from": { "key_code": "w", "modifiers": { "mandatory": ["option", "shift"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" terminal-stack" }],
+                "type": "basic"
+              },
+              {
+                "from": { "key_code": "b", "modifiers": { "mandatory": ["option", "shift"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" safari" }],
+                "type": "basic"
+              },
+              {
+                "from": { "key_code": "e", "modifiers": { "mandatory": ["option", "shift"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" zed" }],
+                "type": "basic"
+              },
+              {
+                "from": { "key_code": "i", "modifiers": { "mandatory": ["option", "shift"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" cursor" }],
+                "type": "basic"
+              },
+              {
+                "from": { "key_code": "a", "modifiers": { "mandatory": ["option", "shift"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" chatgpt" }],
+                "type": "basic"
+              },
+              {
+                "from": { "key_code": "n", "modifiers": { "mandatory": ["option", "shift"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" linear" }],
+                "type": "basic"
+              },
+              {
+                "from": { "key_code": "m", "modifiers": { "mandatory": ["option", "shift"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" whatsapp" }],
+                "type": "basic"
+              },
+              {
+                "from": { "key_code": "t", "modifiers": { "mandatory": ["option", "shift"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" zoom" }],
+                "type": "basic"
+              },
+              {
+                "from": { "key_code": "s", "modifiers": { "mandatory": ["option", "shift"] } },
+                "to": [{ "shell_command": "\"$HOME/.local/bin/omniwm-shortcut\" screenshot-region" }],
                 "type": "basic"
               }
             ]

@@ -21,5 +21,13 @@ for formula in felixkratz/formulae/sketchybar felixkratz/formulae/borders diment
     fi
 done
 
+# The same rule covers casks from third-party taps: the window managers
+# (OmniWM active, AeroSpace disabled) both ship as tap casks.
+for cask in barutsrb/tap/omniwm nikitabobko/tap/aerospace; do
+    if ! printf '%s' "$trusted" | grep -q "$cask"; then
+        brew trust --cask "$cask"
+    fi
+done
+
 brew bundle --global
 {{- end }}

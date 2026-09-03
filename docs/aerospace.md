@@ -1,8 +1,9 @@
-# AeroSpace workflow
+# AeroSpace workflow (inactive rollback)
 
-Helium uses AeroSpace as the macOS equivalent of Rhodium's Niri workflow. The
-goal is not to reproduce Niri mechanically; it is to preserve the useful model:
-directional navigation, a consistent move layer, and minimal pointer use.
+This documents Helium's previous AeroSpace configuration. OmniWM is active; the
+AeroSpace config remains version-controlled and can be re-enabled as a rollback.
+Its goal was not to reproduce Niri mechanically, but to preserve directional
+navigation, a consistent move layer, and minimal pointer use.
 
 ## Workspace model
 

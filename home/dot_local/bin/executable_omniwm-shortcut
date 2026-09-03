@@ -1,0 +1,83 @@
+#!/bin/sh
+
+# Karabiner bridge for the application and utility shortcuts that used to be
+# hosted by AeroSpace. Window-management actions stay native to OmniWM.
+
+set -eu
+
+open_ghostty_next_to_focus() {
+    placement=$1
+    omniwmctl=/opt/homebrew/bin/omniwmctl
+    jq=/opt/homebrew/bin/jq
+    before=$(mktemp -t helium-omniwm-windows)
+    trap 'rm -f "$before"' EXIT HUP INT TERM
+
+    focused=$(
+        "$omniwmctl" query windows --focused --format json |
+            "$jq" -r '.result.payload.windows[0].id // empty'
+    )
+    "$omniwmctl" query windows --bundle-id com.mitchellh.ghostty --format json |
+        "$jq" -r '.result.payload.windows[].id' > "$before"
+
+    /usr/bin/open -na Ghostty.app
+
+    new_window=
+    attempts=0
+    while [ "$attempts" -lt 50 ]; do
+        new_window=$(
+            "$omniwmctl" query windows --bundle-id com.mitchellh.ghostty --format json |
+                "$jq" -r '.result.payload.windows[].id' |
+                while IFS= read -r candidate; do
+                    if ! /usr/bin/grep -Fxq "$candidate" "$before"; then
+                        printf '%s\n' "$candidate"
+                        break
+                    fi
+                done
+        )
+        [ -n "$new_window" ] && break
+        /bin/sleep 0.1
+        attempts=$((attempts + 1))
+    done
+
+    [ -n "$new_window" ] || exit 0
+    if [ -n "$focused" ]; then
+        "$omniwmctl" window focus "$focused" >/dev/null
+        "$omniwmctl" window summon-right "$new_window" >/dev/null
+    fi
+    "$omniwmctl" window focus "$new_window" >/dev/null
+
+    if [ "$placement" = stack ]; then
+        "$omniwmctl" command consume-window-into-column >/dev/null
+    fi
+}
+
+case ${1:-} in
+    terminal) exec /usr/bin/open -na Ghostty.app ;;
+    terminal-right) open_ghostty_next_to_focus right ;;
+    terminal-stack) open_ghostty_next_to_focus stack ;;
+    firefox-personal) exec "$HOME/.local/bin/ff-personal" ;;
+    firefox-atmospheric) exec "$HOME/.local/bin/ff-atmospheric" ;;
+    safari) exec /usr/bin/open -na Safari ;;
+    yazi) exec /usr/bin/open -na Ghostty.app --args -e yazi ;;
+    nvim) exec /usr/bin/open -na Ghostty.app --args -e nvim ;;
+    zed) exec /usr/bin/open -na Zed ;;
+    vscode) exec /usr/bin/open -na "Visual Studio Code" ;;
+    cursor) exec /usr/bin/open -na Cursor ;;
+    chatgpt) exec /usr/bin/open -a ChatGPT ;;
+    notion) exec /usr/bin/open -a Notion ;;
+    linear) exec /usr/bin/open -a Linear ;;
+    slack) exec /usr/bin/open -a Slack ;;
+    whatsapp) exec /usr/bin/open -a WhatsApp ;;
+    teams) exec /usr/bin/open -a "Microsoft Teams" ;;
+    zoom) exec /usr/bin/open -a zoom.us ;;
+    spotify) exec /usr/bin/open -a Spotify ;;
+    onepassword) exec /usr/bin/open -a 1Password ;;
+    downloads) exec /usr/bin/open "$HOME/Downloads" ;;
+    calculator) exec /usr/bin/open -na Calculator ;;
+    close) exec /usr/bin/osascript -e 'tell application "System Events" to keystroke "w" using command down' ;;
+    sleep-display) exec /usr/bin/pmset displaysleepnow ;;
+    screenshot-screen) exec "$HOME/.local/bin/helium-screenshot" screen ;;
+    screenshot-region) exec "$HOME/.local/bin/helium-screenshot" region-clip ;;
+    screenshot-window) exec "$HOME/.local/bin/helium-screenshot" window ;;
+    *) exit 64 ;;
+esac

@@ -43,6 +43,13 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 })
 
 vim.filetype.add({
+  -- Neovim only knows the bare name "Brewfile". The two names this machine
+  -- actually uses -- the live ~/.Brewfile and the chezmoi source dot_Brewfile
+  -- -- get no filetype without these entries.
+  filename = {
+    [".Brewfile"] = "ruby",
+    ["dot_Brewfile"] = "ruby",
+  },
   pattern = {
     [".*/layouts/.*%.html"] = "gohtmltmpl",
     [".*/themes/.*/layouts/.*%.html"] = "gohtmltmpl",

@@ -1,7 +1,7 @@
-# Helium keyboard shortcuts -- SOURCE OF TRUTH
+# Helium keyboard shortcuts -- human-facing reference
 #
-# This file is the only place shortcuts are declared. Edit here, then run
-# `just apply`. A chezmoi run_onchange script regenerates
+# Keep this synchronized with OmniWM and Karabiner, then run `just apply`.
+# A chezmoi run_onchange script regenerates
 # ~/.local/state/helium/cheatsheet.json, which the "Helium Shortcuts" Raycast
 # extension reads. Do not edit the generated JSON.
 #
@@ -14,16 +14,15 @@ hyper = "Control+Option+Shift+Command -- Right Command, or Caps Lock held. Caps 
 
 [[group]]
 name = "Workspaces"
-note = "Numbers are pinned places. Letters are portable projects: summoned to the display you are on, gone when their last window closes."
+note = "Numbers are pinned to physical displays by stable display UUID."
 binds = [
-  { keys = "Hyper 1..9", action = "Focus workspace; press again to bounce back" },
+  { keys = "Hyper 1..9", action = "Focus workspace" },
   { keys = "Opt+Shift 1..9", action = "Send window there without following" },
-  { keys = "Hyper [ / ]", action = "Previous / next occupied workspace on this display" },
-  { keys = "Opt+Shift [ / ]", action = "Send window to previous / next workspace" },
+  { keys = "Hyper [ / ]", action = "Previous / next workspace on this display" },
+  { keys = "Opt+Shift K / J", action = "Move column to workspace above / below (also up/down arrows)" },
+  { keys = "Ctrl+Opt+Shift S / A", action = "Move window up / down, into the next workspace at the edge" },
   { keys = "Hyper Tab", action = "Previous workspace" },
   { keys = "Opt+Shift Tab", action = "Previously focused window" },
-  { keys = "Opt+Shift Enter", action = "Jump to an empty workspace" },
-  { keys = "Hyper U", action = "Enter Workspace mode" },
 ]
 
 [[group]]
@@ -32,28 +31,15 @@ note = "Which workspace lives on which screen."
 binds = [
   { keys = "1", action = "Laptop (left)" },
   { keys = "2..8", action = "MAG ultrawide (center)" },
-  { keys = "9", action = "Dell portrait (right), falls back to the ultrawide" },
-]
-
-[[group]]
-name = "Workspace mode (Hyper U)"
-note = "One key acts, then the mode exits on its own."
-binds = [
-  { keys = "A..Z", action = "Summon named workspace here, creating it on demand" },
-  { keys = "1..9", action = "Focus that pinned workspace" },
-  { keys = "Opt+Shift + key", action = "Send window there without following" },
-  { keys = "Space", action = "Workspace picker" },
-  { keys = "Esc / Enter / Hyper U", action = "Exit" },
+  { keys = "9", action = "Dell portrait (right)" },
 ]
 
 [[group]]
 name = "Finding things"
 note = ""
 binds = [
-  { keys = "Hyper Space", action = "Window picker: every window, every display" },
-  { keys = "Opt+Shift Space", action = "Workspace picker: every occupied workspace" },
-  { keys = "Hyper U, Space", action = "Workspace picker, from inside the mode" },
-  { keys = "Opt+Shift Enter", action = "Empty workspace, this display first" },
+  { keys = "Hyper Space", action = "OmniWM command palette: windows and app menus" },
+  { keys = "Hyper X", action = "Overview: live windows across workspaces and displays" },
 ]
 
 [[group]]
@@ -61,12 +47,12 @@ name = "Focus and windows"
 note = ""
 binds = [
   { keys = "Hyper arrows / HJKL", action = "Focus in a direction, wraps across displays" },
-  { keys = "Opt+Shift arrows / HJKL", action = "Move window; J/K stack it above / below" },
+  { keys = "Opt+Shift H / L", action = "Move window left / right (also left/right arrows)" },
   { keys = "Hyper , / .", action = "Focus previous / next display" },
   { keys = "Opt+Shift , / .", action = "Move window to display and follow" },
   { keys = "Hyper C", action = "Close window" },
-  { keys = "Opt+Shift C", action = "Close every other window here" },
-  { keys = "Hyper F / Opt+Shift F", action = "Fullscreen / native fullscreen" },
+  { keys = "Hyper F", action = "Toggle column 50% / 100% width" },
+  { keys = "Opt+Shift F", action = "Native macOS fullscreen" },
   { keys = "Hyper V", action = "Toggle floating / tiling" },
 ]
 
@@ -74,30 +60,13 @@ binds = [
 name = "Layout"
 note = ""
 binds = [
-  { keys = "Opt+Shift O", action = "Flip the whole workspace: side-by-side <-> stacked" },
-  { keys = "Hyper /", action = "Toggle orientation of the focused container" },
-  { keys = "Opt+Shift V", action = "Join with the window below (vertical group)" },
-  { keys = "Opt+Shift Z", action = "Toggle tiles / accordion" },
-  { keys = "Hyper - / =", action = "Resize width" },
-  { keys = "Opt+Shift - / =", action = "Resize height" },
+  { keys = "Opt+Shift V", action = "Consume window into the neighboring Niri column" },
+  { keys = "Opt+Shift Z", action = "Toggle the focused Niri column tabbed" },
+  { keys = "Hyper - / =", action = "Decrease / increase container width by 10%" },
+  { keys = "Opt+Shift - / =", action = "Decrease / increase window height by 10%" },
+  { keys = "Hyper R", action = "Cycle 33% / 50% / 67% / 100% container widths" },
   { keys = "Opt+Shift R", action = "Balance sizes" },
-  { keys = "Hyper R", action = "Resize mode: arrows resize, -/= smart, B balance and exit" },
-  { keys = "Hyper ;", action = "Enter Service mode" },
-]
-
-[[group]]
-name = "Service mode (Hyper ;)"
-note = ""
-binds = [
-  { keys = "Arrows / HJKL", action = "Join with that neighbor" },
-  { keys = "R", action = "Flatten and rebalance the workspace" },
-  { keys = "B", action = "Balance sizes" },
-  { keys = "F", action = "Toggle floating / tiling" },
-  { keys = "T / A", action = "Tiles / accordion" },
-  { keys = "/", action = "Toggle orientation" },
-  { keys = "M", action = "Move window to the next display" },
-  { keys = "N", action = "Native fullscreen" },
-  { keys = "Backspace", action = "Close every other window" },
+  { keys = "Opt+Shift Scroll", action = "Scroll through Niri columns (wheel or 3-finger trackpad swipe)" },
 ]
 
 [[group]]
@@ -106,8 +75,8 @@ note = ""
 binds = [
   { keys = "Hyper A", action = "Raycast (also Hyper 0; Raycast's own hotkeys)" },
   { keys = "Hyper Enter", action = "Ghostty" },
-  { keys = "Hyper W", action = "Ghostty beside the focused window, 50/50" },
-  { keys = "Opt+Shift W", action = "Ghostty below the focused window, 50/50" },
+  { keys = "Hyper W", action = "Ghostty in a new column beside the focused window" },
+  { keys = "Opt+Shift W", action = "Ghostty stacked in the focused column" },
   { keys = "Hyper B / Hyper Z", action = "Firefox Personal / AtmosphericAI" },
   { keys = "Opt+Shift B", action = "Safari" },
   { keys = "Hyper D", action = "Yazi in Ghostty" },
@@ -121,7 +90,6 @@ binds = [
   { keys = "Hyper P", action = "1Password" },
   { keys = "Hyper O", action = "Downloads" },
   { keys = "Hyper Q", action = "Calculator" },
-  { keys = "Hyper X", action = "Mission Control" },
 ]
 
 [[group]]

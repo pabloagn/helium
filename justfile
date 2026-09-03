@@ -20,13 +20,13 @@ status:
 
 # Install packages, then apply the dotfiles.
 apply: packages
-    chezmoi --source "{{root}}" apply --verbose
+    @chezmoi --source "{{root}}" --no-pager apply
 
 verify:
     chezmoi --source "{{root}}" verify
 
 packages:
-    brew bundle --file "{{root}}/home/dot_Brewfile"
+    @brew bundle --quiet --file "{{root}}/home/dot_Brewfile"
 
 packages-check:
     brew bundle check --file "{{root}}/home/dot_Brewfile"
@@ -41,18 +41,25 @@ aerospace-check:
 aerospace-check-live:
     aerospace reload-config --dry-run --no-gui --warnings-as-errors
 
+omniwm-check:
+    @yq -p toml -o json "{{root}}/home/dot_config/omniwm/settings.toml" >/dev/null
+    @jq empty "{{root}}/home/dot_config/private_karabiner/private_karabiner.json"
+    @sh -n "{{root}}/home/dot_local/bin/executable_omniwm-shortcut"
+    @echo "OmniWM configuration OK"
+
 doctor:
     chezmoi --source "{{root}}" --config "{{root}}/tests/chezmoi.toml" doctor
     brew bundle check --file "{{root}}/home/dot_Brewfile"
     zsh -n "{{root}}/home/dot_zshrc"
     fish -n "{{root}}/home/dot_config/fish/config.fish" "{{root}}/home/dot_config/fish/functions/yy.fish"
     sh -n "{{root}}/home/dot_config/borders/executable_bordersrc"
-    sh -n "{{root}}/home/dot_local/bin/executable_aerospace-mode-toggle" "{{root}}/home/dot_local/bin/executable_aerospace-mode-notify" "{{root}}/home/dot_local/bin/executable_aerospace-open-here" "{{root}}/home/dot_local/bin/executable_aerospace-window-picker" "{{root}}/home/dot_local/bin/executable_aerospace-workspace-picker" "{{root}}/home/dot_local/bin/executable_aerospace-empty-workspace" "{{root}}/home/dot_local/bin/executable_helium-screenshot" "{{root}}/home/dot_local/bin/executable_helium-firefox"
+    sh -n "{{root}}/home/dot_local/bin/executable_aerospace-mode-toggle" "{{root}}/home/dot_local/bin/executable_aerospace-mode-notify" "{{root}}/home/dot_local/bin/executable_aerospace-open-here" "{{root}}/home/dot_local/bin/executable_aerospace-window-picker" "{{root}}/home/dot_local/bin/executable_aerospace-workspace-picker" "{{root}}/home/dot_local/bin/executable_aerospace-empty-workspace" "{{root}}/home/dot_local/bin/executable_helium-screenshot" "{{root}}/home/dot_local/bin/executable_helium-firefox" "{{root}}/home/dot_local/bin/executable_omniwm-shortcut"
     jq empty "{{root}}/home/dot_config/private_karabiner/private_karabiner.json"
     jq empty "{{root}}/home/dot_config/waveterm/settings.json" "{{root}}/home/dot_config/waveterm/termthemes.json"
     yq -e '.' "{{root}}/home/private_Library/private_Application Support/private_tabby/config.yaml" > /dev/null
     just kitty-check
     just aerospace-check
+    just omniwm-check
     YAZI_CONFIG_HOME="{{root}}/home/dot_config/yazi" yazi --debug >/dev/null
     nvim --headless '+qa'
     nvim --headless '+Lazy! check' '+qa'

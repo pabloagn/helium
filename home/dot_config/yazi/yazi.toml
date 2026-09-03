@@ -145,6 +145,12 @@ preview = [
 pdf-expert = [
   { run = 'open -a "PDF Expert" %s', desc = "PDF Expert", orphan = true, for = "macos" },
 ]
+excel = [
+  { run = 'open -a "Microsoft Excel" %s', desc = "Microsoft Excel", orphan = true, for = "macos" },
+]
+libreoffice = [
+  { run = 'open -a LibreOffice %s', desc = "LibreOffice", orphan = true, for = "macos" },
+]
 reveal = [
   { run = 'open -R %s1', desc = "Reveal in Finder", orphan = true, for = "macos" },
 ]
@@ -177,7 +183,11 @@ prepend_rules = [
   { url = "*.{json,jsonc,json5,yaml,yml,toml,ini,conf,cfg,env,properties,plist}", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "open", "reveal"] },
   { url = "*.{css,scss,sass,less,styl}", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "open", "reveal"] },
   { url = "*.{md,markdown,rst,tex,typ,org,adoc,txt,text,log}", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "open", "reveal"] },
-  { url = "*.{xml,xsl,xsd,csv,tsv,parquet,xlsx}", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "open", "reveal"] },
+  { url = "*.{xml,xsl,xsd,csv,tsv,parquet}", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "open", "reveal"] },
+
+  # Spreadsheets: Excel first, LibreOffice second. The duckdb previewer still
+  # renders them in the preview pane.
+  { url = "*.{xlsx,xls,xlsm,ods}", use = ["excel", "libreoffice", "open", "reveal"] },
 
   # Python gets PyCharm as an extra option.
   { url = "*.py", use = ["edit", "edit-helix", "edit-zed", "edit-code", "edit-cursor", "edit-vim", "edit-nano", "edit-pycharm", "open", "reveal"] },
@@ -233,6 +243,10 @@ prepend_previewers = [
   #   * </dev/null is required. glow 3.0 blocks forever reading inherited stdin,
   #     which hangs the whole preview pane.
   { url = "*.{md,markdown}", run = 'piper -- CLICOLOR_FORCE=1 glow -s="$HOME/.config/glow/kanso.json" -w=$w "$1" </dev/null' },
+  # Brewfiles are Ruby but carry no extension, so the built-in code previewer
+  # cannot pick the syntax. Both the live name (.Brewfile) and the chezmoi
+  # source (dot_Brewfile) go through piper + bat with the language forced.
+  { url = "**/{Brewfile,.Brewfile,dot_Brewfile}", run = 'piper -- bat --color=always --style=plain --language=rb --terminal-width=$w "$1"' },
   { mime = "application/{,g}zip", run = "ouch" },
   { mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}", run = "ouch" },
 ]
