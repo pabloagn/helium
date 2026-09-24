@@ -2,8 +2,7 @@ monitorBarOverrides = []
 monitorDwindleOverrides = []
 monitorGapOverrides = []
 monitorNiriOverrides = []
-monitorRoutingOverrides = []
-schemaVersion = 1
+schemaVersion = 3
 
 [appearance]
 mode = "dark"
@@ -34,11 +33,11 @@ useGlobalGaps = true
 
 [focus]
 crossesMonitorAtEdge = true
-followsMouse = false
+followsMouse = true
 followsWindowToMonitor = true
 lockModifier = "off"
 moveCrossesMonitorAtEdge = true
-moveMouseToFocusedWindow = true
+moveMouseToFocusedWindow = false
 raiseOnMouseFocus = false
 
 [gaps]
@@ -64,11 +63,8 @@ updateChecksEnabled = true
 [gestures]
 fingerCount = 3
 invertDirection = true
-# Window placement is keyboard-driven. Disabling the modified mouse MOVE drag
-# prevents a small Option-click movement from swapping columns or inserting a
-# window. Option+drag RESIZE is enabled by choice.
 mouseMoveModifierKey = "off"
-mouseResizeModifierKey = "option"
+mouseResizeModifierKey = "controlOptionCommandShift"
 scrollEnabled = true
 scrollModifierKey = "optionShift"
 scrollSensitivity = 5.0
@@ -83,7 +79,7 @@ hiddenBundleIDs = []
 rehideIntervalSeconds = 5.0
 
 [mouseWarp]
-constrainToArrangement = false
+constrainToArrangement = true
 enabled = true
 margin = 1
 
@@ -138,7 +134,7 @@ position = "center"
 widthPercent = 50.0
 
 [routing]
-mode = "macOS"
+mode = "custom"
 
 [scratchpads]
 
@@ -171,14 +167,6 @@ xOffset = 0.0
 yOffset = 0.0
 
 [workspaceBar.iconOverrides]
-
-# The portrait Dell auto-detects as a vertical Niri layout, where the primary
-# span controls height and width always fills. Niri has no vertical mode, so
-# force horizontal columns: width presets and Hyper R then work like Niri.
-[[monitorOrientationOverrides]]
-monitorName = "DELL U2725QE"
-monitorDisplayUUID = "02E32917-3841-4BCA-9B17-8F9E29BBB9F9"
-orientation = "horizontal"
 
 [[appRules]]
 bundleId = "com.openai.codex"
@@ -437,6 +425,78 @@ binding = "Option+Shift+9"
 id = "moveToWorkspace.8"
 
 [[hotkeys]]
+binding = "Unassigned"
+id = "switchWorkspaceSlot.1"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "moveToWorkspaceSlot.1"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "switchWorkspaceSlot.2"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "moveToWorkspaceSlot.2"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "switchWorkspaceSlot.3"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "moveToWorkspaceSlot.3"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "switchWorkspaceSlot.4"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "moveToWorkspaceSlot.4"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "switchWorkspaceSlot.5"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "moveToWorkspaceSlot.5"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "switchWorkspaceSlot.6"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "moveToWorkspaceSlot.6"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "switchWorkspaceSlot.7"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "moveToWorkspaceSlot.7"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "switchWorkspaceSlot.8"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "moveToWorkspaceSlot.8"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "switchWorkspaceSlot.9"
+
+[[hotkeys]]
+binding = "Unassigned"
+id = "moveToWorkspaceSlot.9"
+
+[[hotkeys]]
 binding = "Hyper+Tab"
 id = "workspaceBackAndForth"
 
@@ -449,19 +509,19 @@ binding = "Hyper+Left Bracket"
 id = "switchWorkspace.previous"
 
 [[hotkeys]]
-binding = "Hyper+H"
+binding = "Unassigned"
 id = "focus.left"
 
 [[hotkeys]]
-binding = "Hyper+J"
+binding = "Unassigned"
 id = "focus.down"
 
 [[hotkeys]]
-binding = "Hyper+K"
+binding = "Unassigned"
 id = "focus.up"
 
 [[hotkeys]]
-binding = "Hyper+L"
+binding = "Unassigned"
 id = "focus.right"
 
 [[hotkeys]]
@@ -517,11 +577,11 @@ binding = "Unassigned"
 id = "moveWindowToWorkspaceDown"
 
 [[hotkeys]]
-binding = "Option+Shift+K"
+binding = "Unassigned"
 id = "moveColumnToWorkspaceUp"
 
 [[hotkeys]]
-binding = "Option+Shift+J"
+binding = "Unassigned"
 id = "moveColumnToWorkspaceDown"
 
 [[hotkeys]]
@@ -561,7 +621,7 @@ binding = "Unassigned"
 id = "moveColumnToWorkspace.8"
 
 [[hotkeys]]
-binding = "Option+Shift+H"
+binding = "Unassigned"
 id = "move.left"
 
 [[hotkeys]]
@@ -573,7 +633,7 @@ binding = "Unassigned"
 id = "move.up"
 
 [[hotkeys]]
-binding = "Option+Shift+L"
+binding = "Unassigned"
 id = "move.right"
 
 [[hotkeys]]
@@ -933,6 +993,10 @@ binding = "Hyper+V"
 id = "toggleFocusedWindowFloating"
 
 [[hotkeys]]
+binding = "Unassigned"
+id = "closeFocusedWindow"
+
+[[hotkeys]]
 binding = "Control+Option+M"
 id = "openMenuAnywhere"
 
@@ -959,6 +1023,11 @@ id = "toggleOverview"
 [[hotkeys]]
 binding = "Unassigned"
 id = "toggleSystemStats"
+
+[[monitorOrientationOverrides]]
+monitorDisplayUUID = "02E32917-3841-4BCA-9B17-8F9E29BBB9F9"
+monitorName = "DELL U2725QE"
+orientation = "horizontal"
 
 [[workspaces]]
 id = "AD36F001-C57E-41A5-AC1D-DF5249D007F0"
@@ -1067,3 +1136,25 @@ type = "specificDisplay"
 [workspaces.monitorAssignment.output]
 displayUUID = "02E32917-3841-4BCA-9B17-8F9E29BBB9F9"
 name = "DELL U2725QE"
+
+# Physical desk routing is independent of the macOS parking staircase.
+[[routing.arrangements]]
+id = "DFB10BA2-CC64-450D-9501-A28E40B1C308"
+
+[[routing.arrangements.monitors]]
+monitorName = "Built-in Retina Display"
+monitorDisplayUUID = "37D8832A-2D66-02CA-B9F7-8F30A301B230"
+gridColumn = 0
+gridRow = 0
+
+[[routing.arrangements.monitors]]
+monitorName = "MAG 341C OLED"
+monitorDisplayUUID = "D09251FE-1F51-4004-8997-8E81F0841A34"
+gridColumn = 1
+gridRow = 0
+
+[[routing.arrangements.monitors]]
+monitorName = "DELL U2725QE"
+monitorDisplayUUID = "02E32917-3841-4BCA-9B17-8F9E29BBB9F9"
+gridColumn = 2
+gridRow = 0

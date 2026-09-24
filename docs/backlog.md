@@ -30,29 +30,29 @@ untouched. If OmniWM disappoints, evaluate these:
   overwrites the aerospace config. The experiment would be building only the
   overview binary from `helper/`. Only relevant if AeroSpace returns.
 
-## OmniWM follow-ups (2026-09-02)
+## OmniWM follow-ups (updated 2026-09-08)
 
-The initial usability gaps are resolved: native hover focus is enabled without
-raise, Niri sizing matches the Rhodium Niri config (50% default, 33/50/67/100
-presets), workspaces use stable display UUID assignments, and Karabiner
-restores the AeroSpace-era launcher and directional aliases. The live
-configuration is documented in `docs/omniwm.md`, including the diagonal
-display arrangement that OmniWM's window parking requires.
+The live configuration and verification commands are documented in
+`docs/omniwm.md`. The September 8 repair aligns the running app and CLI at
+0.6.8, handles every connected subset with a display-change observer, and
+uses Caps+arrows for focus and Caps+physical Shift+arrows for window moves.
+The Dell was disconnected during that repair; its physical behavior still
+needs verification when attached.
 
 - Hyper + scroll cannot scroll columns in OmniWM 0.6.4. The scroll gesture
   matches modifiers exactly and only offers Option+Shift or Control+Shift
   (`ScrollModifierKey.swift`). Ask upstream for a Hyper-compatible chord or a
   subset-match option.
-- Tabbed columns render 12 pt wider than their preset (hardcoded
+- Under 0.6.4, tabbed columns rendered 12 pt wider than their preset (hardcoded
   `TabRailMetrics.totalWidth`, added outside the column width). A tabbed
   column beside a 50% column overflows the view by 12 pt, so every focus
   flip scrolls the strip 12 pt ("shaky windows"). Upstream ask: draw the
-  rail inside the column width, like Niri's `place-within-column`.
-- Windows inspected while hidden (for example an inactive tab) can be
-  misread as non-resizable; OmniWM then pins their min width at the current
-  size and the column refuses to resize (`resolvedSizeConstraints` falls
-  back to `fixed(currentSize)`). Remedy: restart that app or reopen the
-  window. Hit this on a VS Code window on 2026-09-02.
+  rail inside the column width, like Niri's `place-within-column`. Recheck
+  tabbed mode on the current release before treating this as an active bug.
+- Versions 0.6.5/0.6.6 address minimum-size readback errors. The existing
+  Code window ultimately resized to 1690 points without closing its documents
+  during the September 8 repair. Do not retain its old full-width frame as
+  evidence of a permanent app minimum.
 
 - AltTab still runs via its LaunchAgent. Keep or remove once the OmniWM workflow
   has settled.

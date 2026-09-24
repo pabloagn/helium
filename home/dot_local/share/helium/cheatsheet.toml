@@ -10,7 +10,7 @@
 
 [meta]
 title = "Helium Shortcuts"
-hyper = "Control+Option+Shift+Command -- Right Command, or Caps Lock held. Caps Lock tapped = Escape. The move layer is Option+Shift."
+hyper = "Caps Lock held (or Right Command) = Hyper; tapped Caps Lock = Escape. Caps + arrows focuses; Caps + physical Shift + arrows moves the window."
 
 [[group]]
 name = "Workspaces"
@@ -19,7 +19,6 @@ binds = [
   { keys = "Hyper 1..9", action = "Focus workspace" },
   { keys = "Opt+Shift 1..9", action = "Send window there without following" },
   { keys = "Hyper [ / ]", action = "Previous / next workspace on this display" },
-  { keys = "Opt+Shift K / J", action = "Move column to workspace above / below (also up/down arrows)" },
   { keys = "Ctrl+Opt+Shift S / A", action = "Move window up / down, into the next workspace at the edge" },
   { keys = "Hyper Tab", action = "Previous workspace" },
   { keys = "Opt+Shift Tab", action = "Previously focused window" },
@@ -46,8 +45,9 @@ binds = [
 name = "Focus and windows"
 note = ""
 binds = [
-  { keys = "Hyper arrows / HJKL", action = "Focus in a direction, wraps across displays" },
-  { keys = "Opt+Shift H / L", action = "Move window left / right (also left/right arrows)" },
+  { keys = "Caps Lock + arrows", action = "Focus left / down / up / right" },
+  { keys = "Caps Lock + Shift + ← / →", action = "Shift the column left / right, like Niri (no accidental stacking)" },
+  { keys = "Caps Lock + Shift + ↑ / ↓", action = "Move the window up / down within its column" },
   { keys = "Hyper , / .", action = "Focus previous / next display" },
   { keys = "Opt+Shift , / .", action = "Move window to display and follow" },
   { keys = "Hyper C", action = "Close window" },

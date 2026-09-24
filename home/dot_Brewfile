@@ -29,6 +29,10 @@ brew "difftastic"
 # GitHub's stacked-PR preview explicitly supports. Colocates with an existing
 # Git repo, so adopting it is reversible.
 brew "jj"
+# Git LFS: parity with the Durtal Nix shell. Durtal itself tracks no LFS files.
+# `git lfs install` would write filter config into ~/.gitconfig, which chezmoi
+# owns, so add any LFS filter lines to dot_gitconfig.tmpl instead.
+brew "git-lfs"
 
 # Code quality gates. Hooks guard the front door, CI watches the perimeter --
 # with agents writing at speed, the front door is what catches things early.
@@ -74,21 +78,28 @@ brew "btop"
 brew "bottom"
 brew "duf"
 brew "dust"
+brew "htop"
+brew "ncdu"
 
 # Network utilities
 brew "wget"
 brew "xh"
+brew "httpie"
 
 # General utilities
 brew "tree"
+brew "hyperfine"   # command benchmarking
+# Task: the Taskfile.yml runner Durtal uses (`task dev`, `task lint`, ...).
+# The formula is go-task; the binary is `task`.
+brew "go-task"
 
 # Editors
 brew "neovim"
 brew "helix"
 # tree-sitter CLI lets nvim-treesitter build grammars that ship as grammar.js
 # rather than checked-in C (latex is one). This is tree-sitter-cli, not
-# tree-sitter: the latter is the library and ships no binary. node is needed
-# only for that generation step, never at runtime.
+# tree-sitter: the latter is the library and ships no binary. node is also the
+# JavaScript runtime for projects such as Durtal; see the JavaScript block.
 brew "tree-sitter-cli"
 brew "node"
 
@@ -109,6 +120,8 @@ brew "marksman"                       # Markdown
 brew "taplo"                          # TOML
 brew "yaml-language-server"           # YAML
 brew "vscode-langservers-extracted"   # JSON, HTML, CSS, ESLint
+brew "typescript-language-server"     # TypeScript/JavaScript (ts_ls); uses the project's own tsserver
+brew "tailwindcss-language-server"    # Tailwind CSS class completion
 brew "texlab"                         # LaTeX
 brew "tinymist"                       # Typst
 brew "just-lsp"                       # just recipes
@@ -121,6 +134,35 @@ brew "ruff"
 # Astral's `ty` is the likely long-term successor but is still alpha, so it is
 # deliberately not pinned here yet.
 brew "pyrefly"
+
+# JavaScript. node itself sits in the Editors block above. It is newer than the
+# Node 22 that Durtal's Dockerfile builds on; Next.js 16 runs on both, so add
+# node@22 (keg-only) only if a project breaks. The pnpm formula runs ahead of
+# some projects, but pnpm switches to the version pinned in a project's
+# package.json `packageManager` field (Durtal pins pnpm 10). No global
+# typescript: each project brings its own, and the formula is the TypeScript 7
+# native compiler, not the 5.x that projects pin.
+brew "pnpm"
+
+# Cloud, containers and databases. Ported from the Durtal Nix shell.
+brew "awscli"
+# Docker on macOS needs a Linux VM for the engine; the docker formula is only
+# the CLI. Colima is that VM: `colima start` after each reboot (or `brew
+# services start colima` to start it at login). compose and buildx are CLI
+# plugins, found through "cliPluginsExtraDirs" in ~/.docker/config.json. That
+# file is deliberately not managed here: Colima writes `currentContext` into it
+# and `docker login` writes credentials, so a managed copy would clobber both.
+brew "colima"
+brew "docker"
+brew "docker-compose"
+brew "docker-buildx"
+brew "lazydocker"
+# libpq is the Postgres client library plus psql, without a server. It is
+# keg-only; `link: true` makes brew bundle force-link psql onto PATH.
+brew "libpq", link: true
+
+# AI coding CLIs. codex and claude-code are casks further down.
+brew "gemini-cli"
 
 # Qalculate!: scientific calculator with a symbolic solver, unit and currency
 # conversion, and plotting. A formula rather than a cask because upstream ships
@@ -275,6 +317,7 @@ brew "sketchybar"
 #
 # The same Homebrew 6 trust rule applies, so
 # run_onchange_after_10-homebrew-bundle trusts this formula too.
+# Stopped while OmniWM is active; OmniWM supplies the native focus border.
 brew "borders"
 
 # AutoRaise: focus follows the mouse, done right. AeroSpace's own
@@ -295,9 +338,8 @@ brew "borders"
 # run_onchange_after_10-homebrew-bundle trusts this formula too.
 #
 # NOTE: the service is stopped while OmniWM runs (`brew services stop
-# autoraise`). Hover focus is disabled entirely now (OmniWM followsMouse =
-# false); focus is click- and keyboard-driven. `brew services start
-# autoraise` brings hover-raise back only if AeroSpace returns.
+# autoraise`). OmniWM owns native hover focus (followsMouse = true).
+# `brew services start autoraise` is only for an AeroSpace rollback.
 tap "Dimentium/autoraise"
 brew "autoraise"
 
@@ -311,26 +353,17 @@ brew "autoraise"
 # view (Hyper+X), which AeroSpace cannot do. Config lives in
 # ~/.config/omniwm/settings.toml in this repo; the app rewrites that file
 # itself (rules added in the GUI/CLI, workspace UUIDs), so expect chezmoi
-# drift and re-add deliberately. Keybinds mirror the AeroSpace layer split:
-# Hyper focuses, Option+Shift moves. Karabiner and omniwm-shortcut restore the
+# drift and re-add deliberately. Caps+arrows focuses, Caps+physical Shift+arrows
+# moves the window. Karabiner and omniwm-shortcut restore the
 # launcher chords OmniWM cannot execute itself. See docs/omniwm.md.
 #
-# Tap review: barutsrb/homebrew-tap ships Casks/omniwm.rb. It pins the
-# version with a sha256 and downloads the zip from the project's own GitHub
-# releases (github.com/BarutSRB/OmniWM). Artifacts are the app plus the
-# omniwmctl CLI symlink; no install scripts. GPL-2.0, signed and notarized.
-# The Homebrew 6 trust rule applies to tap casks resolved by `brew bundle`,
-# so run_onchange_after_10-homebrew-bundle trusts this cask too.
-tap "barutsrb/tap"
-cask "barutsrb/tap/omniwm"
+# Official Homebrew cask since 0.6.8; the BarutSRB tap is retired. Quit the
+# running app before upgrading and reopen afterward so its IPC version matches
+# the bundled omniwmctl. The package is Developer ID signed and notarized.
+cask "omniwm"
 
-# displayplacer: CLI that sets the macOS display arrangement by stable
-# display UUID. OmniWM parks off-carousel Niri columns beyond the left and
-# right edges of their display, so side-by-side displays that overlap
-# vertically show each other's parked windows (OmniWM's own diagnostic says
-# to arrange displays diagonally). displayplacer makes that diagonal
-# arrangement one reproducible command; see docs/omniwm.md. Homebrew-core
-# formula, MIT, builds from source.
+# displayplacer remains available to inspect or manually restore display state.
+# The OmniWM display listener adjusts origins through CoreGraphics directly.
 brew "displayplacer"
 
 # AeroSpace: the previous window manager. Kept installed and version-
@@ -345,7 +378,7 @@ brew "displayplacer"
 # github.com/nikitabobko/AeroSpace with a sha256. One postflight: it strips
 # the com.apple.quarantine xattr from the app and CLI, which the project
 # does because releases are unsigned. Trusted per-cask by
-# run_onchange_after_10-homebrew-bundle, same as omniwm.
+# run_onchange_after_10-homebrew-bundle.
 tap "nikitabobko/tap"
 cask "nikitabobko/tap/aerospace"
 

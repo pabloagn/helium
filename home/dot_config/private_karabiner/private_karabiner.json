@@ -25,51 +25,94 @@
             ]
           },
           {
-            "description": "OmniWM directional aliases",
+            "description": "Track physical Shift separately from Hyper's synthetic Shift",
             "manipulators": [
               {
-                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
-                "from": { "key_code": "left_arrow", "modifiers": { "optional": ["any"] } },
-                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command focus left" }],
-                "type": "basic"
+                "type": "basic",
+                "from": {"key_code":"left_shift","modifiers":{"optional":["any"]}},
+                "to": [{"set_variable":{"name":"helium_left_shift","value":1,"key_up_value":0}},{"key_code":"left_shift"}]
               },
               {
-                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
-                "from": { "key_code": "down_arrow", "modifiers": { "optional": ["any"] } },
-                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command focus down" }],
-                "type": "basic"
+                "type": "basic",
+                "from": {"key_code":"right_shift","modifiers":{"optional":["any"]}},
+                "to": [{"set_variable":{"name":"helium_right_shift","value":1,"key_up_value":0}},{"key_code":"right_shift"}]
+              }
+            ]
+          },
+          {
+            "description": "Caps Lock + arrows focuses; Caps Lock + physical Shift + arrows moves windows",
+            "manipulators": [
+              {
+                "type": "basic",
+                "conditions": [{"name":"hyper_layer","type":"variable_if","value":1},{"type":"variable_if","name":"helium_left_shift","value":1}],
+                "from": {"key_code":"left_arrow","modifiers":{"optional":["any"]}},
+                "to": [{"shell_command":"/opt/homebrew/bin/omniwmctl command move-column left"}]
               },
               {
-                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
-                "from": { "key_code": "up_arrow", "modifiers": { "optional": ["any"] } },
-                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command focus up" }],
-                "type": "basic"
+                "type": "basic",
+                "conditions": [{"name":"hyper_layer","type":"variable_if","value":1},{"type":"variable_if","name":"helium_left_shift","value":1}],
+                "from": {"key_code":"down_arrow","modifiers":{"optional":["any"]}},
+                "to": [{"shell_command":"/opt/homebrew/bin/omniwmctl command move down"}]
               },
               {
-                "conditions": [{ "name": "hyper_layer", "type": "variable_if", "value": 1 }],
-                "from": { "key_code": "right_arrow", "modifiers": { "optional": ["any"] } },
-                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command focus right" }],
-                "type": "basic"
+                "type": "basic",
+                "conditions": [{"name":"hyper_layer","type":"variable_if","value":1},{"type":"variable_if","name":"helium_left_shift","value":1}],
+                "from": {"key_code":"up_arrow","modifiers":{"optional":["any"]}},
+                "to": [{"shell_command":"/opt/homebrew/bin/omniwmctl command move up"}]
               },
               {
-                "from": { "key_code": "left_arrow", "modifiers": { "mandatory": ["option", "shift"] } },
-                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command move left" }],
-                "type": "basic"
+                "type": "basic",
+                "conditions": [{"name":"hyper_layer","type":"variable_if","value":1},{"type":"variable_if","name":"helium_left_shift","value":1}],
+                "from": {"key_code":"right_arrow","modifiers":{"optional":["any"]}},
+                "to": [{"shell_command":"/opt/homebrew/bin/omniwmctl command move-column right"}]
               },
               {
-                "from": { "key_code": "down_arrow", "modifiers": { "mandatory": ["option", "shift"] } },
-                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command move-column-to-workspace down" }],
-                "type": "basic"
+                "type": "basic",
+                "conditions": [{"name":"hyper_layer","type":"variable_if","value":1},{"type":"variable_if","name":"helium_right_shift","value":1}],
+                "from": {"key_code":"left_arrow","modifiers":{"optional":["any"]}},
+                "to": [{"shell_command":"/opt/homebrew/bin/omniwmctl command move-column left"}]
               },
               {
-                "from": { "key_code": "up_arrow", "modifiers": { "mandatory": ["option", "shift"] } },
-                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command move-column-to-workspace up" }],
-                "type": "basic"
+                "type": "basic",
+                "conditions": [{"name":"hyper_layer","type":"variable_if","value":1},{"type":"variable_if","name":"helium_right_shift","value":1}],
+                "from": {"key_code":"down_arrow","modifiers":{"optional":["any"]}},
+                "to": [{"shell_command":"/opt/homebrew/bin/omniwmctl command move down"}]
               },
               {
-                "from": { "key_code": "right_arrow", "modifiers": { "mandatory": ["option", "shift"] } },
-                "to": [{ "shell_command": "/opt/homebrew/bin/omniwmctl command move right" }],
-                "type": "basic"
+                "type": "basic",
+                "conditions": [{"name":"hyper_layer","type":"variable_if","value":1},{"type":"variable_if","name":"helium_right_shift","value":1}],
+                "from": {"key_code":"up_arrow","modifiers":{"optional":["any"]}},
+                "to": [{"shell_command":"/opt/homebrew/bin/omniwmctl command move up"}]
+              },
+              {
+                "type": "basic",
+                "conditions": [{"name":"hyper_layer","type":"variable_if","value":1},{"type":"variable_if","name":"helium_right_shift","value":1}],
+                "from": {"key_code":"right_arrow","modifiers":{"optional":["any"]}},
+                "to": [{"shell_command":"/opt/homebrew/bin/omniwmctl command move-column right"}]
+              },
+              {
+                "type": "basic",
+                "conditions": [{"name":"hyper_layer","type":"variable_if","value":1}],
+                "from": {"key_code":"left_arrow","modifiers":{"optional":["any"]}},
+                "to": [{"shell_command":"/opt/homebrew/bin/omniwmctl command focus left"}]
+              },
+              {
+                "type": "basic",
+                "conditions": [{"name":"hyper_layer","type":"variable_if","value":1}],
+                "from": {"key_code":"down_arrow","modifiers":{"optional":["any"]}},
+                "to": [{"shell_command":"/opt/homebrew/bin/omniwmctl command focus down"}]
+              },
+              {
+                "type": "basic",
+                "conditions": [{"name":"hyper_layer","type":"variable_if","value":1}],
+                "from": {"key_code":"up_arrow","modifiers":{"optional":["any"]}},
+                "to": [{"shell_command":"/opt/homebrew/bin/omniwmctl command focus up"}]
+              },
+              {
+                "type": "basic",
+                "conditions": [{"name":"hyper_layer","type":"variable_if","value":1}],
+                "from": {"key_code":"right_arrow","modifiers":{"optional":["any"]}},
+                "to": [{"shell_command":"/opt/homebrew/bin/omniwmctl command focus right"}]
               }
             ]
           },

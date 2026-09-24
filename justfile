@@ -43,9 +43,22 @@ aerospace-check-live:
 
 omniwm-check:
     @yq -p toml -o json "{{root}}/home/dot_config/omniwm/settings.toml" >/dev/null
+    @python3 "{{root}}/tests/omniwm-settings.py" "{{root}}/home/dot_config/omniwm/settings.toml"
     @jq empty "{{root}}/home/dot_config/private_karabiner/private_karabiner.json"
     @sh -n "{{root}}/home/dot_local/bin/executable_omniwm-shortcut"
+    @python3 "{{root}}/tests/omniwm-keyboard.py" "{{root}}/home/dot_config/private_karabiner/private_karabiner.json"
+    @xcrun swiftc -D TESTING "{{root}}/home/dot_local/share/helium/omniwm-display-layout.swift" "{{root}}/tests/omniwm-layout/main.swift" -o "${TMPDIR:-/tmp}/helium-omniwm-layout-tests-$(id -u)"
+    @"${TMPDIR:-/tmp}/helium-omniwm-layout-tests-$(id -u)"
     @echo "OmniWM configuration OK"
+
+# Runtime checks, including a brief native diagnostic capture (no window moves).
+omniwm-check-live:
+    @omniwmctl version
+    @omniwmctl ping >/dev/null
+    @"$HOME/.local/bin/omniwm-display-layout" --check
+    @launchctl print "gui/$(id -u)/com.helium.omniwm-display-layout" >/dev/null
+    @python3 "{{root}}/tests/omniwm-live-geometry.py"
+    @python3 "{{root}}/tests/omniwm-runtime-config.py"
 
 doctor:
     chezmoi --source "{{root}}" --config "{{root}}/tests/chezmoi.toml" doctor

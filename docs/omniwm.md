@@ -1,140 +1,140 @@
 # OmniWM workflow
 
-OmniWM is Helium's active macOS window manager. It keeps the Niri model—one
-full-width column at a time, horizontal navigation through columns, vertical
-stacking inside a column—and adds a live cross-workspace Overview.
+OmniWM is Helium's active window manager. The layout reference is Rhodium's
+`home/desktop/wm/niri/default.nix` (not its inactive `config.kdl` backup).
 
 ## Interaction contract
 
-- A new Niri container opens at 50% of its monitor's usable width, exactly
-  as `default-column-width { proportion 0.5 }` did in the Rhodium Niri
-  config. `Hyper R` cycles the Niri presets 33%, 50%, 67%, and 100%.
-- `Option+Shift` + mouse wheel scrolls through the Niri columns, and a
-  three-finger trackpad swipe does the same. OmniWM 0.6.4 matches scroll
-  modifiers exactly and only offers `Option+Shift` or `Control+Shift`, so
-  the Niri `Mod+WheelScroll` chord cannot be Hyper here: Hyper holds all
-  four modifiers and can never equal a two-modifier chord.
-- Hover focus is off (`followsMouse = false`). It made focus jump while the
-  pointer crossed windows. Focus changes only by click or by the `Hyper`
-  focus keys.
-- `Hyper F` toggles the focused column between full width and its previous
-  width — 50% ↔ 100% with the default span. This is Niri's
-  `maximize-column`, the same action `Mod+F` ran there.
-- Modified mouse move and resize gestures are disabled. Window placement is
-  explicit through the keyboard, so a click or tiny pointer movement cannot
-  swap columns.
-- Directional focus and moves may cross monitor edges. Mouse warp follows the
-  macOS left-to-right monitor arrangement.
+- New columns start at **50%** of their own monitor's usable width. Width
+  presets are 33%, 50%, 67%, and 100%; gaps are 12 points.
+- Columns scroll horizontally on every display, including the portrait Dell.
+  Focused columns are never automatically centered. Focusing either of two
+  fully visible columns should leave both in place.
+- Hover focus is enabled in OmniWM. AutoRaise is stopped. Focus does not warp
+  the pointer back into the newly focused window.
+- Modified mouse move gestures are disabled. Right-drag resizing requires
+  all four Hyper modifiers (OmniWM has no resize-off setting). Ordinary
+  clicks focus; keyboard moves rearrange.
+- OmniWM renders the focus border. JankyBorders is stopped, with its old
+  configuration retained for an AeroSpace rollback.
 
-## Display arrangement (required)
+## Keyboard
 
-OmniWM parks off-carousel Niri columns just beyond the left and right edges
-of their display. It cannot clip windows the way a Wayland compositor can.
-When side-by-side displays overlap vertically, each display shows the
-neighbor's parked columns at the neighbor's width. OmniWM ships a diagnostic
-for exactly this and its remedy is: arrange the displays diagonally so no
-two displays share a horizontal band.
+Hold **Caps Lock + arrows** to focus. Hold **Caps Lock + physical Shift +
+arrows** to move. Left/right shifts the column along the carousel, matching
+Rhodium's `move-column-left/right`; up/down moves a window within its column.
+OmniWM's generic `move left/right` instead consumes a window into a neighbor,
+so it is deliberately not bound here. No Shift-arrow moves a column to a
+different workspace. H/J/K/L directional bindings and
+global Option+Shift arrow interception are removed.
 
-The required arrangement is a corner-touching staircase. It keeps the
-left-to-right order, so routing, `Hyper ,` / `.`, and mouse warp still walk
-laptop → MAG → Dell:
-
-| Display | UUID | Origin |
-| --- | --- | --- |
-| Built-in Retina Display (1512x982) | `37D8832A-2D66-02CA-B9F7-8F30A301B230` | `(0,0)` |
-| MAG 341C OLED (3440x1440) | `D09251FE-1F51-4004-8997-8E81F0841A34` | `(1512,-1440)` |
-| DELL U2725QE (1440x2560 portrait) | `02E32917-3841-4BCA-9B17-8F9E29BBB9F9` | `(4952,-4000)` |
-
-The arrangement is declarative. The chezmoi script
-`home/.chezmoiscripts/run_after_20-display-arrangement.sh` declares the full
-display state (origins, resolutions, refresh rates, rotation) and runs on
-every `just apply`. It is a no-op when the origins already match, and it
-skips entirely when any of the three displays is not attached. To change the
-arrangement, edit the script, not System Settings.
-
-`displayplacer list` prints the current state and a restore command; use
-that for a manual rollback. OmniWM's mouse warp (enabled,
-`constrainToArrangement = false`) carries the pointer across the corner
-gaps, so the cursor still travels left and right between displays as before.
-
-The bleed is not cosmetic. Parked windows covering a neighbor display also
-swallow clicks: clicking the "empty" desktop hits the invisible parked
-window, which focuses a MAG workspace and yanks focus back to the center
-monitor. The staircase arrangement fixes that too.
-
-## Workspace placement
-
-Workspace assignments use stable CoreGraphics display UUIDs, not ephemeral
-display numbers:
-
-| Workspaces | Display |
-| --- | --- |
-| `1` | Built-in Retina Display (left) |
-| `2..8` | MAG 341C OLED (center) |
-| `9` | DELL U2725QE (right, portrait) |
-
-The global Niri sizing is proportional, so full width resolves independently
-against each display's current usable frame and gaps.
-
-The workspace bar lives inside the macOS menu-bar row
-(`position = "overlappingMenuBar"`), so it takes no window space at all —
-`reserveLayoutSpace` is off and no strip is reserved below the menu bar. On
-the notched laptop, `notchMode = "splitActiveLeft"` docks the active
-workspace beside the notch; the OmniWM docs recommend exactly this mode for
-notched MacBooks. External displays center their own bar in the empty middle
-of the menu-bar row. Empty workspace pills are hidden; the active workspace
-remains visible even when it contains no windows.
-
-## Shortcut ownership
-
-OmniWM owns window-management actions. Karabiner maps Caps Lock and Right
-Command to literal Hyper, provides the arrow aliases OmniWM cannot duplicate,
-and sends app/utility actions to `~/.local/bin/omniwm-shortcut`.
+Karabiner tracks physical left and right Shift separately because Hyper
+already includes a synthetic Shift. Either Shift works, pressed before or
+after Caps Lock. Plain Shift/Option+Shift arrows retain normal text selection.
+Right Command also provides Hyper; tapping Caps Lock still sends Escape.
 
 | Shortcut | Action |
 | --- | --- |
-| `Hyper` + arrows / `HJKL` | Focus directionally |
-| `Option+Shift H` / `L` (and ← / →) | Move the focused window left / right |
-| `Option+Shift K` / `J` (and ↑ / ↓) | Move the column to the workspace above / below (Niri `Mod+Ctrl+K/J`) |
-| `Control+Option+Shift S` / `A` | Move the window up / down, into the next workspace at the edge (Niri `Mod+Ctrl+S/A`) |
-| `Hyper 1..9` | Focus workspace |
-| `Option+Shift 1..9` | Move window to workspace |
-| `Hyper [` / `]` | Previous / next workspace |
-| `Hyper Tab` | Previously active workspace |
-| `Hyper ,` / `.` | Previous / next monitor |
-| `Option+Shift ,` / `.` | Move window to previous / next monitor |
-| `Hyper Space` | Command palette |
-| `Hyper X` | Overview |
-| `Hyper C` | Close the focused or Overview-selected window |
-| `Hyper F` | Toggle column 50% ↔ 100% width (Niri maximize-column) |
-| `Option+Shift F` | Native fullscreen |
-| `Hyper V` | Toggle floating |
-| `Option+Shift V` | Consume into a Niri column |
-| `Option+Shift Z` | Toggle column tabbed |
-| `Hyper R` | Cycle container width |
-| `Hyper -` / `=` | Adjust container width |
-| `Option+Shift -` / `=` | Adjust window height |
+| Caps Lock + arrows | Focus directionally |
+| Caps Lock + Shift + left/right | Shift carousel column |
+| Caps Lock + Shift + up/down | Move window within column |
+| Hyper 1..9 | Focus workspace |
+| Option+Shift 1..9 | Send window to workspace |
+| Hyper [ / ] | Previous / next workspace |
+| Hyper Tab | Previously active workspace |
+| Hyper , / . | Previous / next monitor |
+| Option+Shift , / . | Move window to monitor and follow |
+| Hyper Space / X | Command palette / Overview |
+| Hyper C | Close window |
+| Hyper F | Toggle full column width |
+| Hyper R | Cycle 33% / 50% / 67% / 100% width |
+| Hyper - / = | Adjust column width |
+| Option+Shift - / = | Adjust window height |
+| Hyper V | Toggle floating |
+| Option+Shift V / Z | Consume into column / toggle tabbed column |
+| Option+Shift F | Native fullscreen |
 
-The AeroSpace-era launchers are preserved: `Hyper Enter/W/B/Z/D/E/I/N/M/T/G/P/O/Q`,
-their `Option+Shift` alternates, the screenshot chords, and `Hyper Escape`.
-Raycast continues to own `Hyper A` and `Hyper 0`.
+The AeroSpace Hyper app launchers remain in Karabiner. Raycast owns Hyper A
+and Hyper 0. The complete list is in the Helium Shortcuts Raycast extension.
+Option+Shift + wheel and three-finger swipes scroll the carousel.
 
-Raycast has no app rule on purpose. Its launcher is an accessory panel with
-no close button, so OmniWM's heuristic already tracks it hands-off and never
-writes its frame. An explicit `float` rule counts as user intent, gives
-OmniWM full frame control, and misaligns the panel that Raycast centers
-itself.
+## Display geometry
 
-## Verification
+macOS cannot clip parked windows like a Wayland compositor. OmniWM requires
+non-overlapping display bands to stop off-carousel windows appearing on a
+neighbor. Its [multi-monitor guide](https://omniwm.app/guides/multi-monitor/)
+separates a technical macOS staircase from the physical desk routing map.
+
+Helium's physical OmniWM routing is laptop → MAG → Dell, using stable UUIDs:
+
+| Display | UUID | Workspaces |
+| --- | --- | --- |
+| Laptop | `37D8832A-2D66-02CA-B9F7-8F30A301B230` | 1 |
+| MAG | `D09251FE-1F51-4004-8997-8E81F0841A34` | 2–8 |
+| Dell | `02E32917-3841-4BCA-9B17-8F9E29BBB9F9` | 9 |
+
+Both macOS X coordinates and OmniWM routing must preserve **laptop LEFT →
+MAG CENTER → Dell RIGHT**. Vertical parking bands put MAG at the bottom,
+Dell above it and laptop at the top, independently of X order. With three
+displays this is not one continuous diagonal; the bands still do not overlap.
+Missing displays are omitted. The helper
+calculates origins from **current logical dimensions**, preserving the main
+display, resolution, refresh rate, and rotation. No fixed resolutions or
+all-three-displays requirement remain.
+
+`com.helium.omniwm-display-layout` observes display changes, app launches,
+and wake, and reapplies the idempotent arrangement after changes settle.
+It only changes origins while OmniWM is running. Unknown or mirrored
+displays are left alone and reported in its log. Pointer warp uses OmniWM's
+custom physical routing. Its horizontal order matches macOS; vertical
+offsets are only for window parking and do not change desk navigation.
 
 ```sh
-omniwmctl ping
-omniwmctl query displays --format table
-omniwmctl query workspaces --format table
-omniwmctl query windows --visible --format table
-jq empty ~/.config/karabiner/karabiner.json
+~/.local/bin/omniwm-display-layout --check  # read-only; nonzero on drift
+~/.local/bin/omniwm-display-layout --apply  # repair now
+launchctl print gui/$(id -u)/com.helium.omniwm-display-layout
 ```
 
+Source: `home/dot_local/share/helium/omniwm-display-layout.swift`.
+The apply script compiles it and installs its LaunchAgent. Logs live at
+`~/.local/state/helium/omniwm-display-layout.log`.
+
+To manually change the technical arrangement, first stop the helper with
+`launchctl bootout gui/$(id -u)/com.helium.omniwm-display-layout`; otherwise
+it will restore the managed layout. `displayplacer list` provides an
+inspection/restore command. Applying Helium starts the helper again.
+
+## Workspace indicator
+
+The indicator occupies the macOS menu-bar row (`overlappingMenuBar`),
+not the window title bars. It reserves no layout space. On the laptop,
+`splitActiveLeft` puts the active workspace beside the notch. Empty pills
+are hidden. This preserves the latest indicator placement choice.
+
+## Updates and checks
+
+Use the official Homebrew `omniwm` cask; the author's old tap is retired.
+After upgrading OmniWM, quit and reopen it so the running app and
+`omniwmctl` use the same IPC protocol. The previous running 0.6.4 app with
+the installed 0.6.5 CLI rejected every shortcut command as a protocol mismatch.
+The repair installed and launched 0.6.8; its settings use schema version 3
+and physical routing is stored in `routing.arrangements`.
+
+```sh
+just omniwm-check       # parsing, Shift/arrow truth table, 24 geometry cases
+just omniwm-check-live  # IPC, display observer, cross-display window bleed
+```
+
+The geometry tests cover all seven connected subsets, scaling changes and
+each main-display choice. They do not substitute for checking an attached
+physical display. The Dell was disconnected during the September 8 repair.
+
+The live check also takes a brief native diagnostic capture and checks for
+active settings errors and input-hook failures. It leaves an existing
+capture untouched. A TOML syntax check alone cannot detect unsupported
+setting values that cause OmniWM to ignore the entire reload.
+
 OmniWM live-reloads `~/.config/omniwm/settings.toml`. GUI changes may rewrite
-the file; import and review them with `chezmoi re-add` rather than allowing the
-managed source and live config to diverge.
+it; review and import intentional changes rather than force-overwriting
+them. App minimum sizes can prevent a column from reaching a requested
+fraction; verify the actual frame before diagnosing a proportional-width bug.

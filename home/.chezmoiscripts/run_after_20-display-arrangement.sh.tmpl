@@ -1,0 +1,18 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+source_file="$HOME/.local/share/helium/omniwm-display-layout.swift"
+binary="$HOME/.local/state/helium/bin/omniwm-display-layout"
+plist="$HOME/Library/LaunchAgents/com.helium.omniwm-display-layout.plist"
+service="gui/$(id -u)/com.helium.omniwm-display-layout"
+mkdir -p "$HOME/.local/state/helium/bin"
+if [ ! -x "$binary" ] || [ "$source_file" -nt "$binary" ]; then
+    /usr/bin/xcrun swiftc -parse-as-library -O "$source_file" -o "$binary.new"
+    launchctl bootout "$service" 2>/dev/null || true
+    mv "$binary.new" "$binary"
+fi
+if ! launchctl print "$service" >/dev/null 2>&1; then
+    launchctl bootstrap "gui/$(id -u)" "$plist"
+fi
+"$binary" --apply
+{{- end }}

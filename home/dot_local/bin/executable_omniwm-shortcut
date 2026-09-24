@@ -5,6 +5,23 @@
 
 set -eu
 
+focus_window() {
+    focus_target=$1
+    "$omniwmctl" window navigate "$focus_target" >/dev/null
+    focus_attempts=0
+    while [ "$focus_attempts" -lt 30 ]; do
+        actual_focus=$(
+            "$omniwmctl" query windows --focused --format json |
+                "$jq" -r '.result.payload.windows[0].id // empty'
+        )
+        [ "$actual_focus" = "$focus_target" ] && return 0
+        /bin/sleep 0.1
+        focus_attempts=$((focus_attempts + 1))
+    done
+    echo "OmniWM focus changed; refusing to rearrange another window." >&2
+    return 1
+}
+
 open_ghostty_next_to_focus() {
     placement=$1
     omniwmctl=/opt/homebrew/bin/omniwmctl
@@ -41,10 +58,10 @@ open_ghostty_next_to_focus() {
 
     [ -n "$new_window" ] || exit 0
     if [ -n "$focused" ]; then
-        "$omniwmctl" window focus "$focused" >/dev/null
+        focus_window "$focused"
         "$omniwmctl" window summon-right "$new_window" >/dev/null
     fi
-    "$omniwmctl" window focus "$new_window" >/dev/null
+    focus_window "$new_window"
 
     if [ "$placement" = stack ]; then
         "$omniwmctl" command consume-window-into-column >/dev/null
@@ -74,7 +91,7 @@ case ${1:-} in
     onepassword) exec /usr/bin/open -a 1Password ;;
     downloads) exec /usr/bin/open "$HOME/Downloads" ;;
     calculator) exec /usr/bin/open -na Calculator ;;
-    close) exec /usr/bin/osascript -e 'tell application "System Events" to keystroke "w" using command down' ;;
+    close) exec /opt/homebrew/bin/omniwmctl command close-focused-window ;;
     sleep-display) exec /usr/bin/pmset displaysleepnow ;;
     screenshot-screen) exec "$HOME/.local/bin/helium-screenshot" screen ;;
     screenshot-region) exec "$HOME/.local/bin/helium-screenshot" region-clip ;;
