@@ -1,0 +1,79 @@
+#!/bin/bash
+set -euo pipefail
+
+# Use the installed, signed native app for both accounts. Work retains the
+# original Codex directories; Personal starts with independent storage.
+profile=${1:-}
+app_path=/Applications/ChatGPT.app
+app_binary="$app_path/Contents/MacOS/ChatGPT"
+
+case "$profile" in
+  work)
+    profile_home="$HOME/.codex"
+    desktop_data="$HOME/Library/Application Support/Codex"
+    ;;
+  personal)
+    profile_home="$HOME/.codex-personal"
+    desktop_data="$HOME/Library/Application Support/ChatGPT-Personal"
+    ;;
+  *)
+    echo "Usage: helium-chatgpt {work|personal}" >&2
+    exit 2
+    ;;
+esac
+
+if [[ ! -x "$app_binary" ]]; then
+  echo "ChatGPT is not installed at $app_path" >&2
+  exit 1
+fi
+
+# Activating by bundle ID can select the other account. Match this profile's
+# main process and activate its PID. The original Work instance has no flags.
+profile_pid=$(/bin/ps -axo pid=,command= | /usr/bin/awk \
+  -v binary="$app_binary" -v data="$desktop_data" -v profile="$profile" '
+  {
+    pid = $1
+    command = substr($0, index($0, $2))
+    if (!found && (command == binary " --user-data-dir=" data ||
+        (profile == "work" && command == binary))) {
+      found = pid
+    }
+  }
+  END { if (found) print found }')
+
+if [[ -n "$profile_pid" ]]; then
+  if /usr/bin/osascript -l JavaScript - "$profile_pid" <<'JXA'
+ObjC.import('AppKit');
+function run(argv) {
+  const app = $.NSRunningApplication.runningApplicationWithProcessIdentifier(Number(argv[0]));
+  if (!app || app.isTerminated || !app.activateWithOptions(3)) {
+    throw new Error('Unable to activate the requested ChatGPT instance');
+  }
+}
+JXA
+  then
+    exit 0
+  fi
+  echo "Could not focus ChatGPT $profile. Run the command again." >&2
+  exit 1
+fi
+
+if [[ "$profile" == personal ]]; then
+  umask 077
+  /bin/mkdir -p "$profile_home" "$desktop_data"
+  # Never copy Work credentials or settings. Initialize only an absent file.
+  # Store Personal credentials inside its own profile, including after login.
+  if [[ ! -e "$profile_home/config.toml" ]]; then
+    (set -o noclobber; printf '%s\n' 'cli_auth_credentials_store = "file"' \
+      > "$profile_home/config.toml") || [[ -f "$profile_home/config.toml" ]]
+  fi
+fi
+
+# The app resets Electron userData during bootstrap, so --user-data-dir alone
+# is insufficient. Its explicit override also preserves CODEX_HOME when it
+# loads the login-shell environment. Pass both via LaunchServices, per the
+# separate-instance launch implementation in ChatGPT 26.901.22334.
+exec /usr/bin/open -n \
+  --env "CODEX_HOME=$profile_home" \
+  --env "CODEX_ELECTRON_USER_DATA_PATH=$desktop_data" \
+  "$app_path" --args "--user-data-dir=$desktop_data"

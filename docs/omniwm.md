@@ -58,6 +58,11 @@ The AeroSpace Hyper app launchers remain in Karabiner. Raycast owns Hyper A
 and Hyper 0. The complete list is in the Helium Shortcuts Raycast extension.
 Option+Shift + wheel and three-finger swipes scroll the carousel.
 
+**Caps Lock + E** opens a fresh Ghostty instance running Neovim, with saved
+Ghostty windows and tabs excluded from this launch. On Neovim's dashboard,
+press `fn` to start a timestamped Markdown note in `~/pendings`, then `i` to
+write and `Esc :w Enter` to save.
+
 ## Display geometry
 
 macOS cannot clip parked windows like a Wayland compositor. OmniWM requires

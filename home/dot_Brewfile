@@ -225,6 +225,14 @@ cask "1password"
 
 # Consumer applications: VPN, media, and messaging.
 cask "protonvpn"
+# Tailscale: private mesh network between my machines, the macOS side of
+# Rhodium's modules/network/tailscale-client.nix. This is the standalone app
+# (tailscale-app), not the `tailscale` formula: the app runs its own network
+# extension, so no root daemon or `brew services` is needed. Its .pkg also
+# installs the CLI at /usr/local/bin/tailscale. The pkg step asks for sudo,
+# and the first launch asks to approve a VPN configuration. It self-updates,
+# so `brew upgrade` is a no-op for it unless called with --greedy.
+cask "tailscale-app"
 cask "vlc"
 cask "discord"
 cask "telegram"

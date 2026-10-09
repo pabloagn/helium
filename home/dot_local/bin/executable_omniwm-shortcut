@@ -76,7 +76,12 @@ case ${1:-} in
     firefox-atmospheric) exec "$HOME/.local/bin/ff-atmospheric" ;;
     safari) exec /usr/bin/open -na Safari ;;
     yazi) exec /usr/bin/open -na Ghostty.app --args -e yazi ;;
-    nvim) exec /usr/bin/open -na Ghostty.app --args -e nvim ;;
+    nvim)
+        # Start one fresh editor window, without restoring Ghostty's saved tabs.
+        # Karabiner launches outside the interactive shell's Homebrew PATH.
+        exec /usr/bin/open -na Ghostty.app --args --window-save-state=never \
+            -e /opt/homebrew/bin/nvim
+        ;;
     zed) exec /usr/bin/open -na Zed ;;
     vscode) exec /usr/bin/open -na "Visual Studio Code" ;;
     cursor) exec /usr/bin/open -na Cursor ;;
