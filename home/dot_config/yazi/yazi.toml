@@ -151,6 +151,14 @@ excel = [
 libreoffice = [
   { run = 'open -a LibreOffice %s', desc = "LibreOffice", orphan = true, for = "macos" },
 ]
+# Calibre has two openers. The viewer only reads the file. Opening a file with
+# calibre.app itself copies it into the Calibre library.
+calibre-viewer = [
+  { run = 'open -a /Applications/calibre.app/Contents/ebook-viewer.app %s', desc = "Calibre viewer", orphan = true, for = "macos" },
+]
+calibre-add = [
+  { run = 'open -a calibre %s', desc = "Add to Calibre library", orphan = true, for = "macos" },
+]
 reveal = [
   { run = 'open -R %s1', desc = "Reveal in Finder", orphan = true, for = "macos" },
 ]
@@ -203,6 +211,10 @@ prepend_rules = [
   { url = "*.pdf", use = ["pdf-expert", "preview", "open", "browser-personal", "browser-atmospheric", "browser-private", "reveal"] },
   { mime = "image/*", use = ["open", "preview", "reveal"] },
   { mime = "{audio,video}/*", use = ["open", "reveal"] },
+
+  # Ebooks: read in the Calibre viewer, or add to the library. This rule comes
+  # before the archive rules, because epub and cbz files are zip files.
+  { url = "*.{epub,mobi,azw,azw3,fb2,djvu,cbz,cbr}", use = ["calibre-viewer", "calibre-add", "open", "reveal"] },
 
   # Archives
   { mime = "application/{,g}zip", use = ["extract", "open", "reveal"] },

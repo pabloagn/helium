@@ -215,6 +215,9 @@ cask "granola"
 # one). It ships extra CLI binaries alongside the app, `soffice` among them,
 # which converts documents headlessly.
 cask "libreoffice"
+# Calibre: the ebook library. The app bundle also holds the standalone reader,
+# ebook-viewer.app, which the ebook rule in yazi.toml opens for reading.
+cask "calibre"
 
 # The full Office bundle
 cask "microsoft-office"
